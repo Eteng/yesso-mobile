@@ -1,0 +1,44 @@
+<nav class="navbar navbar-inverse navbar-default navbar-fixed-top" role="navigation">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header text-center">
+
+        <button  type="button" class="btn btn-default navbar-btn navbar-left pull-left push-left-2"
+                 ng-click="onBack()" ng-show="!onBack">
+            <span class="glyphicon glyphicon-chevron-left"></span>
+        </button>
+
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+        </button>
+
+        <p class="pull-right navbar-item" style="color: #ffffff">
+            <img class="img-polaroid" style="width: 30px;" src="img/{{user.url}}">
+            {{user.displayName}}
+        </p>
+
+
+        <div class="text-center app-mid">
+            <a class="navbar-brand"  href="#">
+                <!--<img src="img/tron_mobile_logo.png" alt="Tron" >-->
+                {{title}}
+            </a>
+        </div>
+
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse navbar-ex1-collapse">
+        <ul class="nav navbar-nav">
+            <li><a href="#/new"><span class="glyphicon glyphicon-tags"></span> New Enrolment</a></li>
+            <li ng-class="{active:$location.path()=='/search'}"><a href="#/search">
+                <span class="glyphicon glyphicon-search"></span> Search</a>
+            </li>
+            <li><a href="#/account"><span class="glyphicon glyphicon-user"></span> My Account</a></li>
+
+            <li><a href="#/category"><span class="glyphicon glyphicon-folder-open"></span> Categories</a></li>
+
+        </ul>
+    </div><!-- /.navbar-collapse -->
+</nav>
