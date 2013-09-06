@@ -1,5 +1,5 @@
 //ngResource
-var myModule = angular.module('assetsApp',['Scope.safeApply']);
+var myModule = angular.module('assetsApp',['Scope.safeApply','ajoslin.mobile-navigate']);
 
 myModule.filter('startFrom', function() {
     return function(input, start) {
@@ -89,6 +89,7 @@ myModule.config(function($routeProvider) {
         .when('/deal/:dealId', {controller:'DealInfoCtrl', templateUrl:'views/deal.html'})
         .when('/account/:accountId', { controller:'AccountCtrl', templateUrl:'views/account.html' })
         .when('/new', {controller:'NewCtrl', templateUrl:'views/new.html'})
+         .when('/two', { templateUrl:'views/page1.html',transition: "modal"})
         .when('/search', {controller:'SearchCtrl', templateUrl:'views/search.html'})
         .when('/category', {controller:'CategoryCtrl', templateUrl:'views/category.html'})
         .when('/finder', {controller:'FinderCtrl', templateUrl:'views/finder.html'})
@@ -121,7 +122,7 @@ myModule.controller('LoginController', function ($scope, $routeParams, $location
             }
             $scope.$safeApply();
         })**/
-        if(this.tron.username = "eteng" && this.tron.password == "eteng"){
+        if(this.tron.username = "a" && this.tron.password == "a"){
             app.api.setLoginKey(
                 {
                     displayName:"Eteng omini",
@@ -185,7 +186,7 @@ myModule.controller('DealInfoCtrl', function ($scope, $http, $routeParams){
     }
     $scope.loadDealInfo();
 });
-myModule.controller('NewCtrl', function ($scope, $http, $routeParams, $location){
+myModule.controller('NewCtrl', function ($scope, $http, $routeParams, $location,$navigate){
     $scope.regions = [
         {id:1,name:'Calabar West',district:["Federal hosuing","state housing"]},
         {id:2,name:'Calabar South',district:["Federal high way","state high way","akabiyo"]}
