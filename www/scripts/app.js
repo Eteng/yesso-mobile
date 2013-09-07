@@ -8,7 +8,6 @@ myModule.filter('startFrom', function() {
     }
 });
 
-
 myModule.directive('myHeadMat',function(){
     return {
         restrict: 'E',
@@ -54,30 +53,30 @@ myModule.directive('dealPager',function(){
     }
 })
 
-myModule.directive('ngTap',function(){
-   var isTouchDevice = !!("ontouchstart" in window);
-    return function(scope, elem, attrs){
-        if(isTouchDevice){
-            var tapping = false;
-            elem.bind("touchstart",function(){tapping = true;});
-            elem.bind("touchmove",function(){tapping = false;});
-            elem.bind("touchend",function(){
-                tapping && scope.$apply(attrs.ngTap);}
-            );
-        }else{
-            elem.bind("click",function(){
-                scope.$apply(attrs.ngTap);
-            })
-        }
-    }
-
-})
+myModule.directive('ngTap', function() {
+     var isTouchDevice = !!("ontouchstart" in window);
+         return function(scope, elm, attrs) {
+             if (isTouchDevice) {
+                 var tapping = false;
+                 elm.bind('touchstart', function() { tapping = true; });
+                 elm.bind('touchmove', function() { tapping = false; });
+                 elm.bind('touchend', function() {
+                 tapping && scope.$apply(attrs.ngTap);
+             });
+             } else {
+                 elm.bind('click', function() {
+                 scope.$apply(attrs.ngTap);
+             });
+         }
+     };
+ });
 function defaultPostData(){
     return {
         apiKey:app.api.getApiKey(),
         loginKey:app.api.getLoginKey()
     };
 }
+
 function defaultError(e){
     alert("An error occurred please try later!");
 }
@@ -166,6 +165,7 @@ myModule.controller('HomeCtrl', function ($scope, $http,$location, $filter) {
 myModule.controller('AccountCtrl', function ($scope, $http, $routeParams){
    
 });
+
 myModule.controller('DealInfoCtrl', function ($scope, $http, $routeParams){
 
     $scope.getDeal = function(deal_id) {
@@ -186,7 +186,11 @@ myModule.controller('DealInfoCtrl', function ($scope, $http, $routeParams){
     }
     $scope.loadDealInfo();
 });
+
 myModule.controller('NewCtrl', function ($scope, $http, $routeParams, $location,$navigate){
+
+    $scope.$navigate = $navigate;
+
     $scope.regions = [
         {id:1,name:'Calabar West',district:["Federal hosuing","state housing"]},
         {id:2,name:'Calabar South',district:["Federal high way","state high way","akabiyo"]}
@@ -197,6 +201,7 @@ myModule.controller('NewCtrl', function ($scope, $http, $routeParams, $location,
         $location.path("/home");
     }
 });
+
 myModule.controller('SearchCtrl', function ($scope, $http, $location, $routeParams){
 
     $scope.$location = $location;
@@ -209,6 +214,7 @@ myModule.controller('SearchCtrl', function ($scope, $http, $location, $routePara
         var svr_url = app.api.route("deal/search")
     }
 });
+
 myModule.controller('CategoryCtrl', function ($scope, $http, $routeParams ,$location){
 
     function fetchCategories() {
@@ -235,6 +241,7 @@ myModule.controller('CategoryCtrl', function ($scope, $http, $routeParams ,$loca
 
    
 });
+
 myModule.controller('FinderCtrl', function ($scope, $http, $routeParams){
    
 });
