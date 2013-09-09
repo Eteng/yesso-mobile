@@ -3,7 +3,7 @@
     <div class="navbar-header text-center">
 
         <button  type="button" class="btn btn-default navbar-btn navbar-left pull-left push-left-2"
-                 ng-click="onBack()" ng-show="!onBack">
+                 ng-click="onBack()" ng-show="show_back">
             <span class="glyphicon glyphicon-chevron-left"></span>
         </button>
 
@@ -36,14 +36,14 @@
     <div class="collapse navbar-collapse navbar-ex1-collapse">
         <ul class="nav navbar-nav">
             <li><a href="#/new"><span class="glyphicon glyphicon-home"></span> New House Enrolment</a></li>
-            <li><a href="#/new"><span class="glyphicon glyphicon-file"></span> New Member Enrolment</a></li>
+            <li><a href="#/member"><span class="glyphicon glyphicon-file"></span> New Member Enrolment</a></li>
             <li ng-class="{active:$location.path()=='/search'}"><a href="#/search">
                 <span class="glyphicon glyphicon-search"></span> Search</a>
             </li>
             <li><a href="#/account"><span class="glyphicon glyphicon-user"></span> My Account</a></li>
 
             <li><a href="#/category"><span class="glyphicon glyphicon-folder-open"></span> Categories</a></li>
-            <li><a href="#/"><span class="glyphicon glyphicon-log-out"></span> Log out</a></li>
+            <li><a href="#/login"><span class="glyphicon glyphicon-log-out"></span> Log out</a></li>
         </ul>
     </div><!-- /.navbar-collapse -->
 </nav>

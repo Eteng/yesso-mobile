@@ -1,27 +1,23 @@
 <my-head-mat
+        showBack="true"
         title="New HouseHold Enrolment"
-        onBack="returnBack()"
+        onBack="$navigate.back()"
         >
 </my-head-mat>
 
-<div>
 
-        <div class="toolbar">
-        <h2 id="pageTitle">Question</h2>
-            <a id="backButton" class="button" ng-tap="$navigate.back()">Back</a>
-        </div>
+<div class="container">
 
-        <div class="content panel" scrollable>
-            <h1>Question one</h1>
-            <p>Option one</p>
-            <p>Option one</p>
-            <p>Option one</p>
+        <ul class="pager">
+            <li class="previous"><a ng-tap="$navigate.back()" ><span class="glyphicon glyphicon-chevron-left"></span> Back</a></li>
+        </ul>
 
-        </div>
-    <div class="list-group">
-        <a href="#" class="list-group-item active">
-            <h4 class="list-group-item-heading">List group item heading</h4>
-            <p class="list-group-item-text">...</p>
-        </a>
-    </div>
-    </div>
+        <render-question
+                question="household[householdInfo.index].questions[householdInfo.counter]">
+        </render-question>
+</div>
+<ul class="pager">
+    <!--<li><a  ng-click="">Previous</a></li>-->
+    <li><a ng-disable="canNext()" ng-tap="setPage(householdInfo.counter+1);$navigate.go('/two/{{householdInfo.index}}/{{householdInfo.counter+1}}','slide')">Skip</a></li>
+    <li><a ng-disable="canNext()" ng-tap="setPage(householdInfo.counter+1);$navigate.go('/two/{{householdInfo.index}}/{{householdInfo.counter+1}}','slide')" >Next</a></li>
+</ul>

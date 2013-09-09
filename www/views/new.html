@@ -1,26 +1,20 @@
 <my-head-mat
-    title="New HouseHold Enrolment"
+    title="HouseHold Enrolment"
     onBack="returnBack()"
 >
 </my-head-mat>
 
 <div>
-    <!--content-->
-    <section>
-        <div class="toolbar">
-            <h1 id="pageTitle">HouseHold</h1>
-        </div>
-        <div class="content panel">
+        <h1>Household Registration</h1>
+        <div class="container">
 
-            <div class="list-group">
-                <a href="#" class="list-group-item active">
-                    <h4 class="list-group-item-heading">List group item heading</h4>
-                    <p class="list-group-item-text">...</p>
-                </a>
-            </div>
-            <ul>
-                <li><a ng-tap="$navigate.go('/one')">SURVEY INFORMATION</a></li>
-                <li><a ng-tap="$navigate.go('/two', 'slide')">SECTION 1: HOUSEHOLD SCHEDULE</a></li>
+            <ul class="list-group">
+                <li class="list-group-item" data-ng-repeat="s in sections">
+                    <span class="badge"><span class="glyphicon glyphicon-chevron-right"></span></span>
+
+                    <a ng-tap="$navigate.go('/two','slide')">{{s}}</a>
+
+                </li>
             </ul>
 
         </div>
@@ -107,5 +101,4 @@
                   <div class="panel-footer">Panel footer</div>
               </div>
               -->
-    </section>
 </div>

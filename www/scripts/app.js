@@ -1,5 +1,29 @@
 //ngResource
-var myModule = angular.module('assetsApp',['Scope.safeApply','ajoslin.mobile-navigate']);
+var myModule = angular.module('assetsApp',['Scope.safeApply','ajoslin.mobile-navigate'],function($compileProvider) {
+    $compileProvider.directive('compile', function($compile) {
+        // directive factory creates a link function
+        return function(scope, element, attrs) {
+            scope.$watch(
+                function(scope) {
+                    // watch the 'compile' expression for changes
+                    return scope.$eval(attrs.compile);
+                },
+                function(value) {
+                    // when the 'compile' expression changes
+                    // assign it into the current DOM
+                    element.html(value);
+
+                    // compile the new DOM and link it to the current
+                    // scope.
+                    // NOTE: we only compile .childNodes so that
+                    // we don't get into infinite loop compiling ourselves
+                    $compile(element.contents())(scope);
+                }
+            );
+        }
+    });
+});
+
 
 myModule.filter('startFrom', function() {
     return function(input, start) {
@@ -14,6 +38,7 @@ myModule.directive('myHeadMat',function(){
         scope:{
           title:'@',
           showRefresh:'@',
+          showBack:'@',
           onRefresh:'&',
           onBack:'&'
         },
@@ -22,6 +47,9 @@ myModule.directive('myHeadMat',function(){
         replace:true,
         link:function($scope, elem, attrs){
             $scope.user = app.api.getLoginKey();
+            if($scope.showBack == "true"){
+                $scope.show_back= true;
+            }
             //$scope.$safeApply();
            /* $scope.showRefresh = false;
             if(typeof ($scope.onRefresh)== 'function'){
@@ -34,21 +62,41 @@ myModule.directive('myHeadMat',function(){
     };
 });
 
-myModule.directive('dealPager',function(){
+myModule.directive('renderQuestion',function(){
     return {
         restrict:'E',
         template:
-            '<ul class="pager">'+
-            '<li ng-class="{disabled: currentPage == 0}"><a href ng-click="prevPage()">Previous</a></li>'+
-            '<li><span>{{2}}/4</span></li>'+
-            '<li ng-class="{disabled: currentPage == pz.length - 1}"><a ng-click="nextPage()">Next</a></li>'+
-            '</ul>',
+            '<div>' +
+            '<h2>{{question.question}}</h2>' +
+            '</div>',
         scope:{
-
+            question:"="
         },
         replace:true,
-        link:function($scope, elem, attrs){
+        link:function(scope, elem, attrs){
 
+            scope.$watch("question",function(newvalue){
+
+                if(newvalue.type == "text"){
+                    text = '<input type="text" class="form-control" placeholder="' +
+                        newvalue.question +
+                        '">'
+                    elem.append(angular.element(text))
+                }else if(newvalue.type == "radio"){
+                    var logs = []
+                    angular.forEach(newvalue.options, function(value,key){
+                        var tmpl = '<div class="radio">' +
+                            '<label><input type="radio" name="optionsRadios" value="' +
+                            value.key +
+                            '">' +
+                            value.value +
+                            '</label></div>';
+                        this.push(tmpl);
+                    },logs)
+                    elem.append(logs)
+                 }
+
+            },true)
         }
     }
 })
@@ -88,16 +136,66 @@ myModule.config(function($routeProvider) {
         .when('/deal/:dealId', {controller:'DealInfoCtrl', templateUrl:'views/deal.html'})
         .when('/account/:accountId', { controller:'AccountCtrl', templateUrl:'views/account.html' })
         .when('/new', {controller:'NewCtrl', templateUrl:'views/new.html'})
-         .when('/two', { templateUrl:'views/page1.html',transition: "modal"})
+        .when('/member', { templateUrl:'views/member.html'})
+        .when('/two/:page/:quest', { templateUrl:'views/page1.html',transition: "modal"})
         .when('/search', {controller:'SearchCtrl', templateUrl:'views/search.html'})
         .when('/category', {controller:'CategoryCtrl', templateUrl:'views/category.html'})
         .when('/finder', {controller:'FinderCtrl', templateUrl:'views/finder.html'})
         .otherwise({redirectTo:'/login'});
 });
 
-myModule.controller('MainController', function ($scope, $location, $rootScope) {
+myModule.controller('MainController', function ($scope, $location, $navigate, $rootScope, $routeParams) {
     $scope.$location = $location;
+    $scope.$navigate = $navigate;
 
+    var data ={
+        sections:["SECTION 1: HOUSEHOLD SCHEDULE"],
+        household:[{label:'PERSONAL INFORMATION',questions:[
+            {question:'Full Name',type:'text', skip:false},
+            {question:'Sex',type:'radio', skip:false, options:[{key:1,value:"Male"},{key:0,value:"Female"}]},
+            {question:'Date of Birth', type:'text', skip:false},
+            {question:'Does he/she have a birth registration certificate?', type:'radio', skip:false, options:[{key:1,value:"Yes"},{key:0,value:"No"}]}
+        ]}]
+    };
+
+    angular.extend($scope,data);
+
+    $scope.counter = 0;
+
+    $scope.householdInfo = {
+        counter:0,
+        index:0
+    }
+
+    $scope.prevPage = function () {
+        if ($scope.householdInfo.counter > 0) {
+            $scope.householdInfo.counter--;
+        }
+    };
+    $scope.nextPage = function () {
+        if ($scope.householdInfo.counter < this.section().questions.length - 1) {
+            $scope.householdInfo.counter++;
+        }
+    };
+    $scope.canNext = function () {
+        if ($scope.householdInfo.counter < this.section().questions.length - 1) {
+            return true
+        }else{
+            return false;
+        }
+    };
+    $scope.setPage = function (n) {
+        $scope.householdInfo.counter = n;
+    };
+    $scope.section = function(){
+        return this.household[0]
+    }
+    $scope.renderQuestion = function(question){
+        console.log(question)
+        if(question.type=="text"){
+            return 'views/textoption.html'
+        }
+    }
 });
 
 myModule.controller('LoginController', function ($scope, $routeParams, $location, $rootScope){
@@ -112,15 +210,6 @@ myModule.controller('LoginController', function ($scope, $routeParams, $location
        this.login();
    }
     $scope.login = function() {
-        /**app.api.login($scope.tron).done(function(response){
-            if(response.success==true){
-                app.api.setLoginKey(response.loginKey);
-                $location.path("/home");
-            }else{
-                alert(response.error_message);
-            }
-            $scope.$safeApply();
-        })**/
         if(this.tron.username = "a" && this.tron.password == "a"){
             app.api.setLoginKey(
                 {
@@ -145,14 +234,7 @@ myModule.controller('LoginController', function ($scope, $routeParams, $location
 myModule.controller('HomeCtrl', function ($scope, $http,$location, $filter) {
     $scope.user = app.api.getLoginKey();
     $scope.loadFeaturedCat = function(){
-        /*app.api.featuredCategories().done(function(response){
-            if(response.success){
-                $scope.deals = response;
-            }else{
-                alert(response.error_message);
-            }
-            $scope.$safeApply();
-        });*/
+
     }
 
     $scope.loadFeaturedCat();
@@ -191,6 +273,8 @@ myModule.controller('NewCtrl', function ($scope, $http, $routeParams, $location,
 
     $scope.$navigate = $navigate;
 
+
+
     $scope.regions = [
         {id:1,name:'Calabar West',district:["Federal hosuing","state housing"]},
         {id:2,name:'Calabar South',district:["Federal high way","state high way","akabiyo"]}
@@ -221,15 +305,7 @@ myModule.controller('CategoryCtrl', function ($scope, $http, $routeParams ,$loca
         app.api.post("categories/").done(function(data){
             $scope.categories = data.categories
         });
-        /*ServiceProvider.post(app.api.route(''), defaultPostData()).done(function (data) {
-            if (data.success) {
-                $scope.categories = data.categories
-            } else {
-                alert(data.error_message);
-            }
-        });*/
     }
-
     fetchCategories();
     
     $scope.refreshData = function(){
