@@ -20,13 +20,6 @@ var app = {
     // Application Constructor
     initialize: function() {
         this.bindEvents();
-        //initialising the API adaptor
-        this.api = new APIService({
-            apikey:"186c10e6-ba7a-474c-b167-f54c8a0411ca",
-            fail:function(e){
-                 alert("An error occurred please try later!");
-            }
-        });
     },
     // Bind Event Listeners
     //

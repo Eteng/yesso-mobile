@@ -29,28 +29,16 @@
     <link rel="stylesheet" href="css/bootstrap.css" />
     <link rel="stylesheet" href="css/mobile-nav.css" />
     <link rel="stylesheet" href="css/bootstrap-glyphicons.css" />
-    <!--<link rel="stylesheet" type="text/css" href="css/bootstrap-responsive.css" />-->
+    <link href="sticky-footer-navbar.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="css/tron.css" />
 
     <title>Yesso</title>
 </head>
-<body ng-class="{login_view:$location.path()=='/login'}"
-      ng-controller="MainController">
+<body ng-controller="MainController">
 
 <div id="wrap">
     <mobile-view></mobile-view>
-
-    <div id="footer">
-        <div class="container">
-            <p class="text-muted credit">&copy;Smartgov 2013</p>
-        </div>
-    </div>
-
-
 </div>
-
-
-
 
 <script type="text/javascript" src="js/jquery.js"></script>
 <script src="js/angular.js"></script>
