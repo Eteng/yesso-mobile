@@ -151,9 +151,10 @@ myModule.controller('MainController', function ($scope, $location, $navigate, $r
     var data ={
         sections:["SECTION 1: HOUSEHOLD SCHEDULE"],
         household:[{label:'PERSONAL INFORMATION',questions:[
-            {question:'Full Name',type:'text', skip:false},
+            {question:'Full Name   sfsdfsdfdsfdsfdf',type:'text', skip:false},
             {question:'Sex',type:'radio', skip:false, options:[{key:1,value:"Male"},{key:0,value:"Female"}]},
             {question:'Date of Birth', type:'text', skip:false},
+            {question:'Date of ssdd', type:'text', skip:false},
             {question:'Does he/she have a birth registration certificate?', type:'radio', skip:false, options:[{key:1,value:"Yes"},{key:0,value:"No"}]}
         ]}]
     };
@@ -195,6 +196,46 @@ myModule.controller('MainController', function ($scope, $location, $navigate, $r
         if(question.type=="text"){
             return 'views/textoption.html'
         }
+    }
+    //login side
+    $scope.tron = {
+        "apiKey":app.api.getApiKey(),
+        "username":"",
+        "password":""
+    };
+    $scope.guest = function(){
+        this.tron.username = 'guest';
+        this.tron.password ='guest';
+        this.login();
+    }
+    $scope.login = function() {
+        if(this.tron.username = "a" && this.tron.password == "a"){
+            app.api.setLoginKey(
+                {
+                    displayName:"Eteng omini",
+                    url:"wikid.jpg"
+                })
+            $location.path("/home");
+        }else{
+            this.error_message = "Username / password is incorrect, please try again!"
+            alert(this.error_message);
+        }
+
+    }
+    $scope.loginSubmit = function(e){
+        e.preventDefault();
+        this.login();
+        return false;
+    }
+    //new
+    $scope.regions = [
+        {id:1,name:'Calabar West',district:["Federal hosuing","state housing"]},
+        {id:2,name:'Calabar South',district:["Federal high way","state high way","akabiyo"]}
+    ];
+    $scope.selectedItem = $scope.regions[0];
+
+    $scope.returnBack = function(){
+        $location.path("/home");
     }
 });
 

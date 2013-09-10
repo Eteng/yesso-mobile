@@ -36,8 +36,18 @@
 <body ng-class="{login_view:$location.path()=='/login'}"
       ng-controller="MainController">
 
-<ng-view></ng-view>
-<!--<mobile-view></mobile-view>-->
+<div id="wrap">
+    <ng-view></ng-view>
+
+    <div id="footer">
+        <div class="container">
+            <p class="text-muted credit">&copy;Smartgov 2013</p>
+        </div>
+    </div>
+
+
+</div>
+
 
 
 

@@ -1,6 +1,6 @@
 <my-head-mat
         showBack="true"
-        title="New HouseHold Enrolment"
+        title="HouseHold Enrolment"
         onBack="$navigate.back()"
         >
 </my-head-mat>
@@ -18,6 +18,6 @@
 </div>
 <ul class="pager">
     <!--<li><a  ng-click="">Previous</a></li>-->
-    <li><a ng-disable="canNext()" ng-tap="setPage(householdInfo.counter+1);$navigate.go('/two/{{householdInfo.index}}/{{householdInfo.counter+1}}','slide')">Skip</a></li>
-    <li><a ng-disable="canNext()" ng-tap="setPage(householdInfo.counter+1);$navigate.go('/two/{{householdInfo.index}}/{{householdInfo.counter+1}}','slide')" >Next</a></li>
+    <li><a ng-show="canNext()" ng-tap="setPage(householdInfo.counter+1);$navigate.go('/two/{{householdInfo.index}}/{{householdInfo.counter+1}}','slide')">Skip</a></li>
+    <li><a ng-show="canNext()" ng-tap="setPage(householdInfo.counter+1);$navigate.go('/two/{{householdInfo.index}}/{{householdInfo.counter+1}}','slide')" >Next</a></li>
 </ul>
