@@ -23,18 +23,8 @@ myModule.directive('myHeadMat',function(){
         transclude: false,
         replace:true,
         link:function($scope, elem, attrs){
-            $scope.user = $cookies.user;
-            if($scope.showBack == "true"){
-                $scope.show_back= true;
-            }
-            //$scope.$safeApply();
-           /* $scope.showRefresh = false;
-            if(typeof ($scope.onRefresh)== 'function'){
-                $scope.showRefresh = true;
-            }*/
-            //alert($scope.showRefresh);
-            //console.log($scope.onRefresh);
-            //console.log("recognised the head-mat")
+            $scope.user = $cookieStore.get('user');
+
         }
     };
 });

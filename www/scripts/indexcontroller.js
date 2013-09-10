@@ -19,7 +19,7 @@ myModule.directive('ngTap', function() {
     };
 });
 
-myModule.controller('MainCtr', function ($scope, $location, $rootScope, $routeParams, $cookies, $window) {
+myModule.controller('MainCtr', function ($scope, $location, $rootScope, $routeParams, $cookieStore , $window) {
     $scope.tron = {
         "username":"",
         "password":""
@@ -31,10 +31,10 @@ myModule.controller('MainCtr', function ($scope, $location, $rootScope, $routePa
     }
     $scope.login = function() {
         if(this.tron.username = "a" && this.tron.password == "a"){
-            $cookies.user = {
+            $cookieStore.put('user',{
                     displayName:"Eteng omini",
                     url:"wikid.jpg"
-            }
+            })
             //$window.location.href ="dashboard.html"
             location.href ="dashboard.html"
         }else{
