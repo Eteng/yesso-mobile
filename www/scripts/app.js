@@ -1,7 +1,6 @@
 //ngResource
 var myModule = angular.module('assetsApp',['Scope.safeApply','ajoslin.mobile-navigate','ngCookies']);
 
-
 myModule.filter('startFrom', function() {
     return function(input, start) {
         start = +start; //parse to int
@@ -9,7 +8,7 @@ myModule.filter('startFrom', function() {
     }
 });
 
-myModule.directive('myHeadMat',function(){
+myModule.directive('myHeadMat',function($cookieStore){
     return {
         restrict: 'E',
         scope:{
@@ -88,9 +87,9 @@ myModule.directive('ngTap', function() {
 
 myModule.config(function($routeProvider) {
      $routeProvider
-        .when('/home', {templateUrl:'views/home.html'})
-        .when('/new', {templateUrl:'views/new.html'})
-        .when('/member', { templateUrl:'views/member.html'})
+        .when('/home', {templateUrl:'views/home.html',transition: "modal"})
+        .when('/new', {templateUrl:'views/new.html',transition: "modal"})
+        .when('/member', { templateUrl:'views/member.html',transition: "modal"})
         .when('/two/:page/:quest', { templateUrl:'views/page1.html',transition: "modal"})
         .when('/search', {templateUrl:'views/search.html'})
         .otherwise({redirectTo:'/home'});

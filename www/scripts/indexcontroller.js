@@ -19,7 +19,7 @@ myModule.directive('ngTap', function() {
     };
 });
 
-myModule.controller('MainCtr', function ($scope, $location, $rootScope, $routeParams, $cookieStore , $window) {
+myModule.controller('MainCtr', function ($scope, $location, $rootScope, $routeParams, $cookieStore, $window) {
     $scope.tron = {
         "username":"",
         "password":""
@@ -35,8 +35,8 @@ myModule.controller('MainCtr', function ($scope, $location, $rootScope, $routePa
                     displayName:"Eteng omini",
                     url:"wikid.jpg"
             })
-            //$window.location.href ="dashboard.html"
-            location.href ="dashboard.html"
+            $window.location.href ="dashboard.html"
+            //location.href ="dashboard.html"
         }else{
             this.error_message = "Username / password is incorrect, please try again!"
             alert(this.error_message);
