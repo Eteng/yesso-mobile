@@ -8,7 +8,7 @@ myModule.filter('startFrom', function() {
     }
 });
 
-myModule.directive('myHeadMat',function($cookieStore){
+myModule.directive('myHeadMat',function($cookieStore, $window){
     return {
         restrict: 'E',
         scope:{
@@ -21,8 +21,13 @@ myModule.directive('myHeadMat',function($cookieStore){
         templateUrl: 'partial/header.html',
         transclude: false,
         replace:true,
-        link:function($scope, elem, attrs){
-            $scope.user = $cookieStore.get('user');
+        link:function(scope, elem, attrs){
+            scope.user = $cookieStore.get('user');
+            scope.logout = function(e){
+                e.preventDefault();
+                $cookieStore.remove('user')
+                $window.location.href = "index.html";
+            }
 
         }
     };
@@ -40,29 +45,52 @@ myModule.directive('renderQuestion',function(){
         },
         replace:true,
         link:function(scope, elem, attrs){
+            var boot_input = function(type,place){
+                return '<input type="' +
+                    type +
+                    '" class="form-control" placeholder="' +
+                    place +
+                    '">'
+            };
+            var boot_radio = function(key,value){
+                return '<div class="radio">' +
+                    '<label><input type="radio" name="optionsRadios" value="' +
+                    key +
+                    '">' +
+                    value +
+                    '</label></div>';
+            };
+            var boot_date = function(){
+                return '<div class="input-group date datepicker" data-date="" data-date-format="dd-mm-yyyy">'+
+                    '<input class="span2" size="16" type="text" value="12-02-2012" readonly/>'+
+                    '<span class="add-on"><i class="icon-th"></i></span>'+
+                '</div>'
+            };
 
             scope.$watch("question",function(newvalue){
 
                 if(newvalue.type == "text"){
-                    text = '<input type="text" class="form-control" placeholder="' +
-                        newvalue.question +
-                        '">'
-                    elem.append(angular.element(text))
+                    elem.append(angular.element(boot_input(newvalue.type,newvalue.question)))
                 }else if(newvalue.type == "radio"){
                     var logs = []
                     angular.forEach(newvalue.options, function(value,key){
-                        var tmpl = '<div class="radio">' +
-                            '<label><input type="radio" name="optionsRadios" value="' +
-                            value.key +
-                            '">' +
-                            value.value +
-                            '</label></div>';
-                        this.push(tmpl);
+                        this.push(boot_radio(value.key,value.label));
                     },logs)
                     elem.append(logs)
-                 }
+                 }else if(newvalue.type == "form"){
+                    var formlog = angular.element('<form role="form"></form>');
+                    angular.forEach(newvalue.options, function(value,key){
+                        this.append('<div class="form-group">'+boot_input(value.type,value.label)+'</div>');
+                    },formlog)
+                    elem.append(formlog);
+                }else if(newvalue.type=="date"){
+                    elem.append(angular.element(boot_input(newvalue.type,newvalue.question)))
+                }else{
+                    elem.append(angular.element(boot_input(newvalue.type,newvalue.question)))
+                }
 
             },true)
+
         }
     }
 })
@@ -95,19 +123,51 @@ myModule.config(function($routeProvider) {
         .otherwise({redirectTo:'/home'});
 });
 
-myModule.controller('MainController', function ($scope, $location, $navigate, $rootScope, $routeParams) {
+myModule.controller('MainController', function ($scope, $location, $cookieStore, $navigate, $rootScope, $routeParams) {
     $scope.$location = $location;
     $scope.$navigate = $navigate;
 
     var data ={
         sections:["SECTION 1: HOUSEHOLD SCHEDULE"],
-        household:[{label:'PERSONAL INFORMATION',questions:[
-            {question:'Names',type:'text', skip:false},
-            {question:'Sex',type:'radio', skip:false, options:[{key:1,value:"Male"},{key:0,value:"Female"}]},
-            {question:'Date of Birth', type:'text', skip:false},
-            {question:'Date of ssdd', type:'text', skip:false},
-            {question:'Does he/she have a birth registration certificate?', type:'radio', skip:false, options:[{key:1,value:"Yes"},{key:0,value:"No"}]}
-        ]}]
+        household:[
+            {label:'PERSONAL INFORMATION',questions:[
+                {question:'Title',type:'radio', skip:false, options:[{key:1,label:"Mr"},{key:0,label:"Miss"},{key:0,label:"Mrs"}]},
+                {question:'Names',type:'form', skip:false,
+                    options:[{type:'text',key:'surname',label:'Surname'}, {type:'text',key:'firstname',label:'First Name'},
+                         {type:'text',key:'middlename',label:'Middle Name'}
+                    ]},
+                {question:'Sex',type:'radio', skip:false, options:[{key:1,label:"Male"},{key:0,label:"Female"}]},
+                {question:'Height(cm)', type:'number', skip:false},
+                {question:'Date of Birth', type:'date', skip:false},
+                {question:'Does he/she have a birth registration certificate?', type:'radio', skip:false,
+                    options:[{key:1,label:"Yes"},{key:0,label:"No"}]},
+                {question:'National ID Card Number', type:'text', skip:false},
+                {question:'Marital Status',type:'radio',
+                    options:[{key:0,label:"Single"},{key:1,label:"Married"},{key:2,label:"Divorced"},
+                             {key:3,label:"Widowed"},{key:4,label:"separated"}]},
+                {question:'Religion',type:'radio', options:[{key:0,label:"Christian"},{key:1,label:"Islam"},{key:2,label:"Other"}]}
+            ]},
+            {label:"BIO DATA", questions:[
+                {question:'Blood Group',type:'radio', options:[{key:0,label:"A"},{key:1,label:"B"},{key:2,label:"AB"},{key:3,label:"O"}]},
+                {question:'Rhesus',type:'radio', skip:false, options:[{key:0,label:"Plus"},{key:1,label:"Minus"}]}
+            ]},
+            {label:"ADDRESS", questions:[
+                {question:'Residential Address', type:'text', skip:false},
+                {question:'Contact Address', type:'text', skip:false}
+            ]},
+            {label:"EDUCATION AND PROFESSION", questions:[
+                {question:'Education Level',type:'radio', options:[{key:0,label:"Nursery"},{key:1,label:"Primary"},{key:2,label:"JSS1"},{key:3,label:"SS3"}]},
+                {question:'Profession',type:'radio', skip:false, options:[{key:0,label:"Teacher"},{key:1,label:"Mechanic"}]}
+            ]},
+            {label:"NEXT OF KIN", questions:[
+                {question:'Names',type:'form', skip:false,
+                    options:[{type:'text',key:'surname',label:'Surname'}, {type:'text',key:'firstname',label:'First Name'},
+                        {type:'text',key:'middlename',label:'Middle Name'}
+                    ]},
+                {question:'Contact Address', type:'text', skip:false},
+                {question:'Relationship', type:'text', skip:false},
+                {question:'Telephone number', type:'tel', skip:false}
+            ]}]
     };
 
     angular.extend($scope,data);
@@ -137,13 +197,12 @@ myModule.controller('MainController', function ($scope, $location, $navigate, $r
         $scope.householdInfo.counter = n;
     };
     $scope.section = function(){
-        return this.household[0]
+        return this.household[this.householdInfo.index]
     }
-    $scope.renderQuestion = function(question){
-        console.log(question)
-        if(question.type=="text"){
-            return 'views/textoption.html'
-        }
+    $scope.returnBack = function(){
+        this.householdInfo.counter=0;
+        this.householdInfo.index =0;
+        $location.path("/member");
     }
     //login side
     $scope.tron = {
@@ -154,9 +213,6 @@ myModule.controller('MainController', function ($scope, $location, $navigate, $r
         this.tron.username = 'guest';
         this.tron.password ='guest';
         this.login();
-    }
-    $scope.logout = function(e){
-        $location.href = "index.html"
     }
     //new
     $scope.regions = [

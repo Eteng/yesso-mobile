@@ -1,8 +1,6 @@
-html{
-    height: 100%;
+body {
+    padding-top: 70px;
 }
-body { padding-top: 70px;
-    height: 100%;}
 
 .login_view {
     position: absolute;
@@ -10,6 +8,7 @@ body { padding-top: 70px;
     height: 100%;
     background-color: #ffffff;
 }
+
 .header {
     border: 0px;
     padding: 2px 8px;
@@ -17,9 +16,11 @@ body { padding-top: 70px;
     margin-left: -20px;
     margin-right: -20px;
 }
+
 .view {
     display: none;
 }
+
 .form-signin {
     max-width: 300px;
     padding: 19px 29px 29px;
@@ -54,57 +55,8 @@ body { padding-top: 70px;
     margin-left: 10px;
 }
 
-#push,
-#footer {
+#push{
     height: 35px;
-}
-
-/* Wrapper for page content to push down footer */
-#wrap {
-    min-height: 100%;
-    height: auto !important;
-    height: 100%;
-    /* Negative indent footer by its height */
-    margin: 0 auto -60px;
-    /* Pad bottom by footer height */
-    padding: 0 0 60px;
-}
-
-/* Set the fixed height of the footer here */
-#footer {
-    height: 60px;
-    background-color: #f5f5f5;
-}
-
-
-/* Custom page CSS
--------------------------------------------------- */
-/* Not required for template or sticky footer method. */
-
-#wrap > .container {
-    padding: 60px 15px 0;
-}
-.container .credit {
-    margin: 20px 0;
-}
-
-#footer > .container {
-    padding-left: 15px;
-    padding-right: 15px;
-}
-
-code {
-    font-size: 80%;
-}
-/*----------------------------------------------------*/
-/* Lastly, apply responsive CSS fixes as necessary */
-@media (max-width: 767px) {
-    #footer {
-        margin-left: -20px;
-        margin-right: -20px;
-        padding-left: 20px;
-        padding-right: 20px;
-    }
 }
 
 .input-fullwidth { display: block; }
@@ -115,27 +67,6 @@ code {
     border-radius: 3px;
 }
 
-.input-prepend.input-fullwidth {
-    position: relative;
-}
-.input-prepend.input-fullwidth .add-on {
-    width: 40px;
-}
-.input-prepend.input-fullwidth .input-wrapper {
-    position: absolute;
-    display: block;
-    left: 51px; /* 40 + 2*5 - 1 */
-    right: 0;
-    top: 0;
-    bottom: 0;
-}
-.input-prepend.input-fullwidth .input-wrapper input {
-    width: 100%;
-    height: 100%;
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    box-sizing: border-box;
-}
 /**boot 3*/
 .navbar-item {
     padding: 15px 15px;

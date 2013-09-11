@@ -5,27 +5,36 @@
     <meta name="format-detection" content="telephone=no" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <link rel="stylesheet" type="text/css" href="css/index.css" />
+   <link rel="stylesheet" type="text/css" href="css/index.css" />
 
-    <link rel="stylesheet" href="css/bootstrap.css" />
-    <link rel="stylesheet" href="css/mobile-nav.css" />
-    <link rel="stylesheet" href="css/bootstrap-glyphicons.css" />
+    <link rel="stylesheet" href="css/bootstrap.min.css" />
+    <!--<link rel="stylesheet" href="css/mobile-nav.css" />-->
+    <!--<link rel="stylesheet" href="css/bootstrap-glyphicons.css" />-->
     <link href="sticky-footer-navbar.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="css/tron.css" />
+    <!--<link rel="stylesheet" type="text/css" href="css/datepicker.css" />-->
 
     <title>Yesso</title>
 </head>
 <body ng-controller="MainController">
 
-<div id="wrap" class="">
-    <ng-view></ng-view>
 
-    <div id="footer" >
-        <div class="container" style="background-color: #010066;color: #ffffff">
-            <p class="text-muted credit">&copy;Smartgov 2013</p>
-        </div>
-    </div>
-</div>
+   <!-- <ng-view></ng-view>-->
+   <div id="wrap" >
+
+           <ng-view></ng-view>
+
+
+
+       <div id="footer" >
+           <div class="container" style="background-color: #010066;color: #ffffff">
+               <p class="credit">&copy;Smartgov 2013</p>
+           </div>
+       </div>
+   </div>
+
+
+
 
 <script type="text/javascript" src="js/jquery.js"></script>
 <script type="text/javascript" src="js/jquery.timeago.js"></script>
@@ -36,7 +45,10 @@
 <script src="js/Scope.SafeApply.js"></script>
 
 <script type="text/javascript" src="phonegap.js"></script>
+
 <script type="text/javascript" src="js/bootstrap.min.js"></script>
+<script type="text/javascript" src="js/bootstrap-datepicker.js"></script>
+
 <script type="text/javascript" src="main.js"></script>
 
 <script type="text/javascript" src="scripts/service.js"></script>

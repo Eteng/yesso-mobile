@@ -1,23 +1,23 @@
-<my-head-mat
-    showBack=true
-    title="HouseHold Enrolment"
-    onBack="returnBack()"
->
-</my-head-mat>
 
-<div>
-        <div class="alert" style="background-color: #010066;color: #ffffff">
-            <h1 >Member Registration</h1>
-        </div>
-        <div class="container">
+    <my-head-mat
+        showBack=true
+        title="HouseHold Enrolment"
+        onBack="returnBack()">
+    </my-head-mat>
 
-            <ul class="list-group">
-                <li class="list-group-item" data-ng-repeat="s in household">
-                    <span class="badge">{{s.questions.length}}</span>
-                    <a ng-tap="householdInfo.index=$index; $navigate.go('/two/{{$index}}/{{householdInfo.counter}}','slide')" >{{s.label}}</a>
-                </li>
-            </ul>
+    <div class="container">
+            <div class="alert page-header" style="background-color: #010066;color: #ffffff">
+                <h1 >Member Registration</h1>
+            </div>
+            <div>
 
-        </div>
+                <ul class="list-group">
+                    <li class="list-group-item" data-ng-repeat="s in household">
+                        <span class="badge">{{s.questions.length}}</span>
+                        <a ng-tap="householdInfo.index=$index; $navigate.go('/two/{{$index}}/{{householdInfo.counter}}','slide')" >{{s.label}}</a>
+                    </li>
+                </ul>
 
-</div>
+            </div>
+
+    </div>

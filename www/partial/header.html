@@ -1,5 +1,6 @@
-<nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+<div class="navbar navbar-default navbar-fixed-top" role="navigation">
     <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="container">
     <div class="navbar-header text-center">
 
         <button  type="button" class="btn btn-default navbar-btn navbar-left pull-left push-left-2"
@@ -17,9 +18,8 @@
             <img class="img-polaroid" style="width: 30px;" src="img/{{user.url}}">
             {{user.displayName}}
         </p>
-
+        <img src="img/logo.png" height="50px" class="pull-left">
         <a class="navbar-brand"  href="#">
-            <img src="img/logo.png" height="50px"  >
             {{title}}
         </a>
         <!--
@@ -40,7 +40,8 @@
             <li><a href="#/search"><span class="glyphicon glyphicon-search"></span> Search</a></li>
             <li><a href="#/account"><span class="glyphicon glyphicon-user"></span> My Account</a></li>
             <li><a href="#/category"><span class="glyphicon glyphicon-folder-open"></span> Categories</a></li>
-            <li><a href="#/login"><span class="glyphicon glyphicon-log-out"></span> Log out</a></li>
+            <li><a href="#" ng-click="logout($event)"><span class="glyphicon glyphicon-log-out"></span> Log out</a></li>
         </ul>
     </div>
-</nav>
+    </div>
+</div>

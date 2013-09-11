@@ -29,10 +29,16 @@ myModule.controller('MainCtr', function ($scope, $location, $rootScope, $routePa
         this.tron.password ='guest';
         this.login();
     }
+    $scope.needLogin = function(){
+        if($cookieStore.get('user')){
+            $window.location.href ="dashboard.html"
+        }
+    }
+    $scope.needLogin();
     $scope.login = function() {
         if(this.tron.username = "a" && this.tron.password == "a"){
             $cookieStore.put('user',{
-                    displayName:"Eteng omini",
+                    displayName:"Eteng",
                     url:"wikid.jpg"
             })
             $window.location.href ="dashboard.html"
