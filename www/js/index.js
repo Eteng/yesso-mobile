@@ -34,11 +34,13 @@ var app = {
     // function, we must explicity call 'app.receivedEvent(...);'
     onDeviceReady: function() {
        // app.receivedEvent('deviceready');
+
+        app.database();
+        //bootstrap doc
         angular.element(document).ready(function() {
             angular.bootstrap(document);
         });
-        //check for sessions or load the logon
-        //$("#loginView").show();
+
     },
     // Update DOM on a Received Event
     receivedEvent: function(id) {
@@ -50,6 +52,45 @@ var app = {
         receivedElement.setAttribute('style', 'display:block;');
 
         console.log('Received Event: ' + id);
+    },
+
+    database:function(){
+        if(angular.isUndefined(this.db)){
+            try {
+                if (!window.openDatabase) {
+                    alert('Databases are not supported in this browser.');
+                } else {
+                    this.db = window.openDatabase("yesso_database","1.0","yesso offline database storage", 200000);
+                    this.db.transaction(
+                        function(tx){
+                            tx.executeSql('CREATE TABLE IF NOT EXISTS Enrolment(id INTEGER PRIMARY KEY AUTOINCREMENT, Household_id INTEGER NOT NULL, Head BOOLEAN NOT NULL)');
+                            tx.executeSql('CREATE TABLE IF NOT EXISTS Enrolled(' +
+                                ' id INTEGER PRIMARY KEY AUTOINCREMENT,' +
+                                ' Enrolment_id INTEGER NOT NULL,' +
+                                ' Ans Text,' +
+                                ' FOREIGN KEY(Enrolment_id) REFERENCES Enrolment(id))');
+                            //tx.executeSql('INSERT INTO SoccerPlayer(Name,Club) VALUES ("Alexandre Pato", "AC Milan")');
+                            //tx.executeSql('INSERT INTO SoccerPlayer(Name,Club) VALUES ("Van Persie", "Arsenal")');
+                        },function(err){
+                            alert("Error processing SQL: "+err.code);
+                        },function(){
+                            console.log("initialising database success");
+                        }
+                    );
+                }
+            } catch(e) {
+
+                if (e == 2) {
+                    console.log("Invalid database version.");
+                } else {
+                    console.log("Unknown error "+e+".");
+                }
+                return;
+            }
+
+        }
+
+        return this.db;
     }
 
 };

@@ -28,12 +28,25 @@ myModule.directive('myHeadMat',function($cookieStore, $window){
                 $cookieStore.remove('user')
                 $window.location.href = "index.html";
             }
+            //new household
+            scope.newHouseHold = function(e){
+                if(angular.isUndefined($cookieStore.get('newhouse'))){
+                    $cookieStore.put('newhouse',{});
+                    return true;
+                }else{
+                    $window.confirm('There is an ongoing enrolment do you want to continue',function(result){
+                        if(!result){
+                            $cookieStore.put('newhouse',{});
+                        }
+                    },"New Enrolment",["continue","discard"])
+                }
+            }
 
         }
     };
 });
 
-myModule.directive('renderQuestion',function(){
+myModule.directive('renderQuestion',function($compile){
     return {
         restrict:'E',
         template:
@@ -52,9 +65,11 @@ myModule.directive('renderQuestion',function(){
                     place +
                     '">'
             };
-            var boot_radio = function(key,value){
+            var boot_radio = function(key,value,id){
                 return '<div class="radio">' +
-                    '<label><input type="radio" name="optionsRadios" value="' +
+                    '<label><input type="radio" ng-model="model_' +
+                    id+
+                    '" name="optionsRadios" value="' +
                     key +
                     '">' +
                     value +
@@ -67,16 +82,18 @@ myModule.directive('renderQuestion',function(){
                 '</div>'
             };
 
-            scope.$watch("question",function(newvalue){
+            scope.$watch("question",function(newvalue,oldvalue,scope){
 
                 if(newvalue.type == "text"){
                     elem.append(angular.element(boot_input(newvalue.type,newvalue.question)))
                 }else if(newvalue.type == "radio"){
                     var logs = []
                     angular.forEach(newvalue.options, function(value,key){
-                        this.push(boot_radio(value.key,value.label));
+                        this.push(boot_radio(value.key,value.label,newvalue.qid));
                     },logs)
                     elem.append(logs)
+                    elem.append("<p>{{model_"+newvalue.qid+"}}</p>");
+                    $compile(elem)(scope)
                  }else if(newvalue.type == "form"){
                     var formlog = angular.element('<form role="form"></form>');
                     angular.forEach(newvalue.options, function(value,key){
@@ -131,12 +148,12 @@ myModule.controller('MainController', function ($scope, $location, $cookieStore,
         sections:["SECTION 1: HOUSEHOLD SCHEDULE"],
         household:[
             {label:'PERSONAL INFORMATION',questions:[
-                {question:'Title',type:'radio', skip:false, options:[{key:1,label:"Mr"},{key:0,label:"Miss"},{key:0,label:"Mrs"}]},
+                {qid:1,question:'Title',type:'radio', skip:false, options:[{key:0,label:"Mr"},{key:1,label:"Miss"},{key:2,label:"Mrs"}]},
                 {question:'Names',type:'form', skip:false,
-                    options:[{type:'text',key:'surname',label:'Surname'}, {type:'text',key:'firstname',label:'First Name'},
-                         {type:'text',key:'middlename',label:'Middle Name'}
+                    options:[{qid:2,type:'text',key:'surname',label:'Surname'}, {qid:3,type:'text',key:'firstname',label:'First Name'},
+                         {qid:4,type:'text',key:'middlename',label:'Middle Name'}
                     ]},
-                {question:'Sex',type:'radio', skip:false, options:[{key:1,label:"Male"},{key:0,label:"Female"}]},
+                {qid:5,question:'Sex',type:'radio', skip:false, options:[{key:1,label:"Male"},{key:0,label:"Female"}]},
                 {question:'Height(cm)', type:'number', skip:false},
                 {question:'Date of Birth', type:'date', skip:false},
                 {question:'Does he/she have a birth registration certificate?', type:'radio', skip:false,
@@ -193,7 +210,17 @@ myModule.controller('MainController', function ($scope, $location, $cookieStore,
             return false;
         }
     };
+    $scope.canBack = function () {
+        if ($scope.householdInfo.counter >= 1) {
+            return true
+        }else{
+            return false;
+        }
+    };
     $scope.setPage = function (n) {
+        $scope.householdInfo.counter = n;
+    };
+    $scope.submit = function (n) {
         $scope.householdInfo.counter = n;
     };
     $scope.section = function(){
@@ -221,5 +248,23 @@ myModule.controller('MainController', function ($scope, $location, $cookieStore,
     ];
     $scope.selectedItem = $scope.regions[0];
 
-
+    $scope.totalEnrolment = function(){
+         //var lastresult;
+         var db = app.database()
+         db.transaction(
+            function(transaction){
+                transaction.executeSql("SELECT COUNT(*) AS total FROM Enrolment;",[],
+                    function(trnsaction, results){
+                        for (var i=0; i<results.rows.length; i++) {
+                            var row = results.rows.item(i);
+                            $scope.totalEnrolments = row.total;
+                            $scope.$safeApply();
+                        }
+                    },function(err){
+                        alert("Error processing SQL: "+err.code);
+                    })
+            }
+         );
+    }
+    $scope.totalEnrolment();
 });
