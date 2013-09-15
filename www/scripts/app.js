@@ -28,7 +28,6 @@ myModule.directive('myHeadMat',function($cookieStore, $window){
                 $cookieStore.remove('user')
                 $window.location.href = "index.html";
             }
-            //new household
             scope.newHouseHold = function(e){
                 if(angular.isUndefined($cookieStore.get('newhouse'))){
                     $cookieStore.put('newhouse',{});
@@ -46,7 +45,7 @@ myModule.directive('myHeadMat',function($cookieStore, $window){
     };
 });
 
-myModule.directive('renderQuestion',function($compile){
+myModule.directive('renderQuestion',function($compile,$rootScope){
     return {
         restrict:'E',
         template:
@@ -58,11 +57,13 @@ myModule.directive('renderQuestion',function($compile){
         },
         replace:true,
         link:function(scope, elem, attrs){
-            var boot_input = function(type,place){
+            var boot_input = function(type,place,id){
                 return '<input type="' +
                     type +
                     '" class="form-control" placeholder="' +
                     place +
+                    '" ng-model="model_'+
+                    id+
                     '">'
             };
             var boot_radio = function(key,value,id){
@@ -84,30 +85,26 @@ myModule.directive('renderQuestion',function($compile){
 
             scope.$watch("question",function(newvalue,oldvalue,scope){
 
-                if(newvalue.type == "text"){
-                    elem.append(angular.element(boot_input(newvalue.type,newvalue.question)))
-                }else if(newvalue.type == "radio"){
+                if(newvalue.type == "radio"){
                     var logs = []
                     angular.forEach(newvalue.options, function(value,key){
                         this.push(boot_radio(value.key,value.label,newvalue.qid));
                     },logs)
                     elem.append(logs)
-                    elem.append("<p>{{model_"+newvalue.qid+"}}</p>");
-                    $compile(elem)(scope)
                  }else if(newvalue.type == "form"){
                     var formlog = angular.element('<form role="form"></form>');
                     angular.forEach(newvalue.options, function(value,key){
-                        this.append('<div class="form-group">'+boot_input(value.type,value.label)+'</div>');
+                        this.append('<div class="form-group">'+boot_input(value.type,value.label,value.key)+'</div>');
                     },formlog)
                     elem.append(formlog);
                 }else if(newvalue.type=="date"){
-                    elem.append(angular.element(boot_input(newvalue.type,newvalue.question)))
+                    elem.append(angular.element(boot_input(newvalue.type,newvalue.question,newvalue.qid)))
                 }else{
-                    elem.append(angular.element(boot_input(newvalue.type,newvalue.question)))
+                    elem.append(angular.element(boot_input(newvalue.type,newvalue.question,newvalue.qid)))
                 }
+                $compile(elem)($rootScope);
 
             },true)
-
         }
     }
 })
@@ -148,47 +145,49 @@ myModule.controller('MainController', function ($scope, $location, $cookieStore,
         sections:["SECTION 1: HOUSEHOLD SCHEDULE"],
         household:[
             {label:'PERSONAL INFORMATION',questions:[
-                {qid:1,question:'Title',type:'radio', skip:false, options:[{key:0,label:"Mr"},{key:1,label:"Miss"},{key:2,label:"Mrs"}]},
+                {qid:1, question:'Title',type:'radio', skip:false, options:[{key:0,label:"Mr"},{key:1,label:"Miss"},{key:2,label:"Mrs"}]},
                 {question:'Names',type:'form', skip:false,
                     options:[{qid:2,type:'text',key:'surname',label:'Surname'}, {qid:3,type:'text',key:'firstname',label:'First Name'},
                          {qid:4,type:'text',key:'middlename',label:'Middle Name'}
                     ]},
-                {qid:5,question:'Sex',type:'radio', skip:false, options:[{key:1,label:"Male"},{key:0,label:"Female"}]},
-                {question:'Height(cm)', type:'number', skip:false},
-                {question:'Date of Birth', type:'date', skip:false},
-                {question:'Does he/she have a birth registration certificate?', type:'radio', skip:false,
+                {qid:5, question:'Sex',type:'radio', skip:false, options:[{key:1,label:"Male"},{key:0,label:"Female"}]},
+                {qid:6, question:'Height(cm)', type:'number', skip:false},
+                {qid:7, question:'Date of Birth', type:'date', skip:false},
+                {qid:8, question:'Does he/she have a birth registration certificate?', type:'radio', skip:false,
                     options:[{key:1,label:"Yes"},{key:0,label:"No"}]},
-                {question:'National ID Card Number', type:'text', skip:false},
-                {question:'Marital Status',type:'radio',
+                {qid:9, question:'National ID Card Number', type:'text', skip:false},
+                {qid:10, question:'Marital Status',type:'radio',
                     options:[{key:0,label:"Single"},{key:1,label:"Married"},{key:2,label:"Divorced"},
                              {key:3,label:"Widowed"},{key:4,label:"separated"}]},
-                {question:'Religion',type:'radio', options:[{key:0,label:"Christian"},{key:1,label:"Islam"},{key:2,label:"Other"}]}
+                {qid:11, question:'Religion',type:'radio', options:[{key:0,label:"Christian"},{key:1,label:"Islam"},{key:2,label:"Other"}]}
             ]},
             {label:"BIO DATA", questions:[
-                {question:'Blood Group',type:'radio', options:[{key:0,label:"A"},{key:1,label:"B"},{key:2,label:"AB"},{key:3,label:"O"}]},
-                {question:'Rhesus',type:'radio', skip:false, options:[{key:0,label:"Plus"},{key:1,label:"Minus"}]}
+                {qid:12, question:'Blood Group',type:'radio', options:[{key:0,label:"A"},{key:1,label:"B"},{key:2,label:"AB"},{key:3,label:"O"}]},
+                {qid:13, question:'Rhesus',type:'radio', skip:false, options:[{key:0,label:"Plus"},{key:1,label:"Minus"}]}
             ]},
             {label:"ADDRESS", questions:[
-                {question:'Residential Address', type:'text', skip:false},
-                {question:'Contact Address', type:'text', skip:false}
+                {qid:14, question:'Residential Address', type:'text', skip:false},
+                {qid:15, question:'Contact Address', type:'text', skip:false}
             ]},
             {label:"EDUCATION AND PROFESSION", questions:[
-                {question:'Education Level',type:'radio', options:[{key:0,label:"Nursery"},{key:1,label:"Primary"},{key:2,label:"JSS1"},{key:3,label:"SS3"}]},
-                {question:'Profession',type:'radio', skip:false, options:[{key:0,label:"Teacher"},{key:1,label:"Mechanic"}]}
+                {qid:16, question:'Education Level',type:'radio', options:[{key:0,label:"Nursery"},{key:1,label:"Primary"},{key:2,label:"JSS1"},{key:3,label:"SS3"}]},
+                {qid:17, question:'Profession',type:'radio', skip:false, options:[{key:0,label:"Teacher"},{key:1,label:"Mechanic"}]}
             ]},
             {label:"NEXT OF KIN", questions:[
                 {question:'Names',type:'form', skip:false,
-                    options:[{type:'text',key:'surname',label:'Surname'}, {type:'text',key:'firstname',label:'First Name'},
-                        {type:'text',key:'middlename',label:'Middle Name'}
+                    options:[{type:'text',key:'k_surname',label:'Surname'}, {type:'text',key:'k_firstname',label:'First Name'},
+                        {type:'text',key:'k_middlename',label:'Middle Name'}
                     ]},
-                {question:'Contact Address', type:'text', skip:false},
-                {question:'Relationship', type:'text', skip:false},
-                {question:'Telephone number', type:'tel', skip:false}
+                {qid:18, question:'Contact Address', type:'text', skip:false},
+                {qid:19, question:'Relationship', type:'text', skip:false},
+                {qid:20, question:'Telephone number', type:'tel', skip:false}
             ]}]
     };
 
     angular.extend($scope,data);
+
     $scope.counter = 0;
+
     $scope.householdInfo = {
         counter:0,
         index:0
@@ -221,6 +220,12 @@ myModule.controller('MainController', function ($scope, $location, $cookieStore,
         $scope.householdInfo.counter = n;
     };
     $scope.submit = function (n) {
+        //process question..
+        var id = this.household[this.householdInfo.index].questions[this.householdInfo.counter].qid
+        var ans  = $scope['model_'+id];
+        var enrolment = $cookieStore.get('newhouse');
+        enrolment[id] = ans;
+        $cookieStore.put('newhouse',enrolment);
         $scope.householdInfo.counter = n;
     };
     $scope.section = function(){

@@ -89,7 +89,6 @@ var app = {
             }
 
         }
-
         return this.db;
     }
 
