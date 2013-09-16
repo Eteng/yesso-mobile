@@ -25,7 +25,7 @@
 
     <feature name="debug-server" required="true">
         <param name="domain" value="http://debug.phonegap.com"/>
-        <param name="key" value="some_unique_key"/>
+        <param name="key" value="yesso_app_ng_123"/>
     </feature>
     <!--
         If you do not want any permissions to be added to your app, add the

@@ -36,11 +36,8 @@ var app = {
        // app.receivedEvent('deviceready');
         document.addEventListener("backbutton", function() {
             var hashtag = location.hash;
-            alert(hashtag+"==>"+(hashtag == "#/index.html" || hashtag == "#/home"))
             if (hashtag == "#/index.html" || hashtag == "#/home") {
-                alert("exiting")
                 app.exitAppPopup();
-                //app.exitAppPopup();
             } else {
                 history.back();
             }
