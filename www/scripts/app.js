@@ -139,7 +139,7 @@ myModule.config(function($routeProvider) {
         .otherwise({redirectTo:'/home'});
 });
 
-myModule.controller('MainController', function ($scope, $location, $cookieStore, $navigate, $rootScope, $routeParams) {
+myModule.controller('MainController', function ($scope, $location, $cookieStore, $navigate, $rootScope, $routeParams, $window) {
     $scope.$location = $location;
     $scope.$navigate = $navigate;
 
