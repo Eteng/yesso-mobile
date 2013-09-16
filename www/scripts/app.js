@@ -33,8 +33,8 @@ myModule.directive('myHeadMat',function($cookieStore, $window){
                     $cookieStore.put('newhouse',{});
                     return true;
                 }else{
-                    $window.confirm('There is an ongoing enrolment do you want to continue',function(result){
-                        if(!result){
+                    navigator.notification.confirm('There is an ongoing enrolment do you want to continue',function(result){
+                        if(result==2){
                             $cookieStore.put('newhouse',{});
                         }
                     },"New Enrolment",["continue","discard"])
@@ -189,9 +189,19 @@ myModule.controller('MainController', function ($scope, $location, $cookieStore,
     $scope.counter = 0;
 
     $scope.householdInfo = {
-        counter:0,
-        index:0
+         counter:0,
+         index:0
     }
+    $scope.scopeExistingEnrolment= function(){
+         var x_enrolment = $cookieStore.get('newhouse');
+         if(!angular.isUndefined(x_enrolment)){
+                angular.forEach(x_enrolment, function(v,k){
+                    this['model_'+k]=v;
+                },$rootScope)
+         }
+    }
+    $scope.scopeExistingEnrolment();
+
     $scope.prevPage = function () {
         if ($scope.householdInfo.counter > 0) {
             $scope.householdInfo.counter--;
@@ -221,10 +231,18 @@ myModule.controller('MainController', function ($scope, $location, $cookieStore,
     };
     $scope.submit = function (n) {
         //process question..
-        var id = this.household[this.householdInfo.index].questions[this.householdInfo.counter].qid
-        var ans  = $scope['model_'+id];
+        var question = this.household[this.householdInfo.index].questions[this.householdInfo.counter]
+        var ans;
         var enrolment = $cookieStore.get('newhouse');
-        enrolment[id] = ans;
+        if(question.type=="form"){
+            angular.forEach(question.options,function(v,k){
+                ans = $scope['model_'+v.key];
+                enrolment[v.key] = ans;
+            })
+        }else{
+            ans  = $scope['model_'+question.qid];
+            enrolment[question.qid] = ans;
+        }
         $cookieStore.put('newhouse',enrolment);
         $scope.householdInfo.counter = n;
     };
@@ -254,7 +272,6 @@ myModule.controller('MainController', function ($scope, $location, $cookieStore,
     $scope.selectedItem = $scope.regions[0];
 
     $scope.totalEnrolment = function(){
-         //var lastresult;
          var db = app.database()
          db.transaction(
             function(transaction){

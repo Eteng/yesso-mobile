@@ -27,6 +27,14 @@ var app = {
     // 'load', 'deviceready', 'offline', and 'online'.
     bindEvents: function() {
         document.addEventListener('deviceready', this.onDeviceReady, false);
+        document.addEventListener("backbutton", function() {
+            var hashtag = location.hash;
+            if (hashtag == "" || hashtag == "#home") {
+                app.exitAppPopup();
+            } else {
+                history.back();
+            }
+        }, false);
     },
     // deviceready Event Handler
     //
@@ -52,6 +60,20 @@ var app = {
         receivedElement.setAttribute('style', 'display:block;');
 
         console.log('Received Event: ' + id);
+    },
+
+    exitAppPopup: function(){
+        navigator.notification.confirm(
+            'Exit Yesso Application'
+            , function(button) {
+                if (button == 2) {
+                    navigator.app.exitApp();
+                }
+            }
+            , 'Exit'
+            , 'No,Yes'
+        );
+        return false;
     },
 
     database:function(){
