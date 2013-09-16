@@ -30,7 +30,8 @@ var app = {
         document.addEventListener("backbutton", function() {
             var hashtag = location.hash;
             if (hashtag == "" || hashtag == "#home") {
-                app.exitAppPopup();
+                this.exitAppPopup();
+                //app.exitAppPopup();
             } else {
                 history.back();
             }
