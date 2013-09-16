@@ -26,6 +26,7 @@ myModule.directive('myHeadMat',function($cookieStore, $window){
             scope.logout = function(e){
                 e.preventDefault();
                 $cookieStore.remove('user')
+                $cookieStore.remove('newhouse')
                 $window.location.href = "index.html";
             }
             scope.newHouseHold = function(e){
@@ -34,7 +35,7 @@ myModule.directive('myHeadMat',function($cookieStore, $window){
                     return true;
                 }else{
                     navigator.notification.confirm('There is an ongoing enrolment do you want to continue',function(result){
-                        if(result==2){
+                        if(!result){
                             $cookieStore.put('newhouse',{});
                         }
                     },"New Enrolment",["continue","discard"])
@@ -269,6 +270,7 @@ myModule.controller('MainController', function ($scope, $location, $cookieStore,
         {id:1,name:'Calabar West',district:["Federal hosuing","state housing"]},
         {id:2,name:'Calabar South',district:["Federal high way","state high way","akabiyo"]}
     ];
+
     $scope.selectedItem = $scope.regions[0];
 
     $scope.totalEnrolment = function(){
