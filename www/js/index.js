@@ -39,7 +39,7 @@ var app = {
             alert(hashtag+"==>"+(hashtag == "" || hashtag == "#/home"))
             if (hashtag == "" || hashtag == "#/home") {
                 alert("exiting")
-                this.exitAppPopup();
+                app.exitAppPopup();
                 //app.exitAppPopup();
             } else {
                 history.back();
