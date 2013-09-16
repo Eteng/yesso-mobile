@@ -193,6 +193,13 @@ myModule.controller('MainController', function ($scope, $location, $cookieStore,
          counter:0,
          index:0
     }
+    $scope.needLogin = function(){
+        if(angular.isUndefined($cookieStore.get('user'))){
+            $window.location.href ="index.html"
+        }
+    }
+    $scope.needLogin();
+
     $scope.scopeExistingEnrolment= function(){
          var x_enrolment = $cookieStore.get('newhouse');
          if(!angular.isUndefined(x_enrolment)){
