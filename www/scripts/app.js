@@ -27,6 +27,7 @@ myModule.directive('myHeadMat',function($cookieStore, $window){
                 e.preventDefault();
                 $cookieStore.remove('user');
                 $cookieStore.remove('newhouse');
+                console.log($cookieStore.get('user'));
                 $window.location.href = "index.html";
             }
             scope.newHouseHold = function(e){
