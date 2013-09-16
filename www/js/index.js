@@ -27,15 +27,6 @@ var app = {
     // 'load', 'deviceready', 'offline', and 'online'.
     bindEvents: function() {
         document.addEventListener('deviceready', this.onDeviceReady, false);
-        document.addEventListener("backbutton", function() {
-            var hashtag = location.hash;
-            if (hashtag == "" || hashtag == "#home") {
-                this.exitAppPopup();
-                //app.exitAppPopup();
-            } else {
-                history.back();
-            }
-        }, false);
     },
     // deviceready Event Handler
     //
@@ -43,7 +34,18 @@ var app = {
     // function, we must explicity call 'app.receivedEvent(...);'
     onDeviceReady: function() {
        // app.receivedEvent('deviceready');
+        document.addEventListener("backbutton", function() {
 
+            var hashtag = location.hash;
+            alert(hashtag)
+            if (hashtag == "" || hashtag == "#home") {
+                alert("exiting")
+                this.exitAppPopup();
+                //app.exitAppPopup();
+            } else {
+                history.back();
+            }
+        }, false);
         app.database();
         //bootstrap doc
         angular.element(document).ready(function() {
