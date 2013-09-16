@@ -30,7 +30,7 @@ myModule.controller('MainCtr', function ($scope, $location, $rootScope, $routePa
         this.login();
     }
     $scope.needLogin = function(){
-        if($cookieStore.get('user')){
+        if(!angular.isUndefined($cookieStore.get('user'))){
             $window.location.href ="dashboard.html"
         }
     }
