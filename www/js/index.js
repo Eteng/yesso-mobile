@@ -37,7 +37,7 @@ var app = {
         document.addEventListener("backbutton", function() {
             var hashtag = location.hash;
             if (hashtag == "#/index.html" || hashtag == "#/home") {
-                app.exitAppPopup();
+                navigator.app.exitApp();
             } else {
                 history.back();
             }
@@ -62,10 +62,11 @@ var app = {
     },
 
     exitAppPopup: function(){
-        navigator.notification.confirm(
+         navigator.notification.confirm(
             'Exit Yesso Application'
             , function(button) {
                 if (button == 2) {
+
                     navigator.app.exitApp();
                 }
             }
@@ -88,10 +89,9 @@ var app = {
                             tx.executeSql('CREATE TABLE IF NOT EXISTS Enrolled(' +
                                 ' id INTEGER PRIMARY KEY AUTOINCREMENT,' +
                                 ' Enrolment_id INTEGER NOT NULL,' +
-                                ' Ans Text,' +
+                                ' Question Text NOT NULL,' +
+                                ' Answer Text,' +
                                 ' FOREIGN KEY(Enrolment_id) REFERENCES Enrolment(id))');
-                            //tx.executeSql('INSERT INTO SoccerPlayer(Name,Club) VALUES ("Alexandre Pato", "AC Milan")');
-                            //tx.executeSql('INSERT INTO SoccerPlayer(Name,Club) VALUES ("Van Persie", "Arsenal")');
                         },function(err){
                             alert("Error processing SQL: "+err.code);
                         },function(){

@@ -299,4 +299,30 @@ myModule.controller('MainController', function ($scope, $location, $cookieStore,
          );
     }
     $scope.totalEnrolment();
+
+    $scope.saveEnrolment = function(){
+        var db = app.database()
+        db.transaction(
+            function(transaction){
+                //@todo: start time and finish time
+                transaction.executeSql("INSERT INTO Enrolment(Household_id,Head) VALUES(?,?) ;",[new Date().getTime(),true],
+                    function(trnsaction, results){
+                        var x_enrolment = $cookieStore.get('newhouse');
+                        //insert answers for enrolment
+                        angular.forEach(x_enrolment, function(v,k){
+                            this.executeSql("INSERT INTO Enrolled(Enrolment_id,Question,Answer) VALUES (?,?,?);",[results.insertId,k,v]);
+                        },transaction);
+                    },function(err){
+                        alert("Error processing SQL: "+err.code);
+                    });
+
+            },function(err){
+                alert("Error processing SQL for save enrolment: "+err.message);
+            },function(){
+                $scope.totalEnrolment();
+                console.log("Saving Enrollment data success");
+                alert("Saved Enrollment data success")
+            }
+        );
+    }
 });

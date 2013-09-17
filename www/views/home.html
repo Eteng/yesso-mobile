@@ -2,16 +2,22 @@
     <my-head-mat>
     </my-head-mat>
 
+    <div class="yesso alert"  >
+        <h1>Yesso Agent Dashboard </h1>
+    </div>
     <div class="container">
 
-            <ul class="nav nav-pills nav-stacked">
-                <li >
-                    <a >
-                        <span class="badge pull-right">{{totalEnrolments}}</span>
+                <ul class="list-group">
+                    <li class="list-group-item">
+                        <span class="badge">{{totalEnrolments}}</span>
                         Total Enrolment
-                    </a>
-                </li>
+                    </li>
+                </ul>
+        <div class="well">
 
-            </ul>
+            <button type="button" class="btn btn-default btn-lg">
+                <span class="glyphicon glyphicon-transfer"></span> Sync
+            </button>
+        </div>
 
     </div>
