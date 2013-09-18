@@ -19,25 +19,18 @@
             {{user.displayName}}
         </p>
         <img src="img/logo.png" height="50px" class="pull-left">
-        <a class="navbar-brand"  href="#">
+        <a class="navbar-brand" >
             {{title}}
         </a>
-        <!--
-        <div class="text-center app-mid">
-            <a class="navbar-brand"  href="#">
-                <img src="img/tron_mobile_logo.png"  >
-                {{title}}
-            </a>
-        </div>
-        -->
     </div>
 
     <!-- Collect the nav links, forms, and other content for toggling -->
     <div class="collapse navbar-collapse navbar-ex1-collapse">
         <ul class="nav navbar-nav">
-            <li><a href="#/home"><span class="glyphicon glyphicon-home"></span> Home</a></li>
+            <li><a href="#/home"><span class="glyphicon glyphicon-hand-left"></span> Home</a></li>
            <!-- <li><a href="#/new"><span class="glyphicon glyphicon-certificate"></span> New House Enrolment</a></li>-->
-            <li><a ng-click="newHouseHold($event)" href="#/member"><span class="glyphicon glyphicon-user"></span> New House Enrolment</a></li>
+            <li><a ng-click="newHouseHold($event)" href="#/house"><span class="glyphicon glyphicon-home"></span> New House Enrolment</a></li>
+            <li><a ng-click="newMemberHold($event)" href="#/member/0"><span class="glyphicon glyphicon-user"></span> New Member Enrolment</a></li>
             <li><a href="#/search"><span class="glyphicon glyphicon-search"></span> Search</a></li>
             <li><a href="#/category"><span class="glyphicon glyphicon-folder-open"></span> Categories</a></li>
             <li><a href="#" ng-click="logout($event)"><span class="glyphicon glyphicon-log-out"></span> Log out</a></li>

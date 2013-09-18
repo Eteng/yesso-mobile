@@ -27,7 +27,6 @@ myModule.directive('myHeadMat',function($cookieStore, $window){
                 e.preventDefault();
                 $cookieStore.remove('user');
                 $cookieStore.remove('newhouse');
-                console.log($cookieStore.get('user'));
                 $window.location.href = "index.html";
             }
             scope.newHouseHold = function(e){
@@ -59,7 +58,19 @@ myModule.directive('renderQuestion',function($compile,$rootScope){
         },
         replace:true,
         link:function(scope, elem, attrs){
+            var bool_checkbox = function(type,place,id){
+               return '<div class="btn-group" data-toggle="buttons">'+
+                      '<label class="btn btn-default">'+
+                       '<input type="checkbox" ' +
+                   'ng-model="model_'+
+                    id+
+                      '">'+place+
+                       '</label></div>'
+            }
             var boot_input = function(type,place,id){
+                if(type=="checkbox"){
+                    return bool_checkbox(type,place,id);
+                }else
                 return '<input type="' +
                     type +
                     '" class="form-control" placeholder="' +
@@ -84,6 +95,7 @@ myModule.directive('renderQuestion',function($compile,$rootScope){
                     '<span class="add-on"><i class="icon-th"></i></span>'+
                 '</div>'
             };
+
 
             scope.$watch("question",function(newvalue,oldvalue,scope){
 
@@ -132,8 +144,8 @@ myModule.directive('ngTap', function() {
 myModule.config(function($routeProvider) {
      $routeProvider
         .when('/home', {templateUrl:'views/home.html',transition: "modal"})
-        .when('/new', {templateUrl:'views/new.html',transition: "modal"})
-        .when('/member', { templateUrl:'views/member.html',transition: "modal"})
+        .when('/member/:house', {templateUrl:'views/member.html',transition: "modal"})
+        .when('/house', { templateUrl:'views/house.html',transition: "modal"})
         .when('/two/:page/:quest', { templateUrl:'views/page1.html',transition: "modal"})
         .when('/search', {templateUrl:'views/search.html'})
         .otherwise({redirectTo:'/home'});
@@ -144,7 +156,7 @@ myModule.controller('MainController', function ($scope, $location, $cookieStore,
     $scope.$navigate = $navigate;
 
     var data ={
-        sections:["SECTION 1: HOUSEHOLD SCHEDULE"],
+        memberhold:["SECTION 1: HOUSEHOLD SCHEDULE"],
         household:[
             {label:'PERSONAL INFORMATION',questions:[
                 {qid:1, question:'Title',type:'radio', skip:false, options:[{key:0,label:"Mr"},{key:1,label:"Miss"},{key:2,label:"Mrs"}]},
@@ -167,13 +179,32 @@ myModule.controller('MainController', function ($scope, $location, $cookieStore,
                 {qid:12, question:'Blood Group',type:'radio', options:[{key:0,label:"A"},{key:1,label:"B"},{key:2,label:"AB"},{key:3,label:"O"}]},
                 {qid:13, question:'Rhesus',type:'radio', skip:false, options:[{key:0,label:"Plus"},{key:1,label:"Minus"}]}
             ]},
-            {label:"ADDRESS", questions:[
+            {label:"RESIDENTIAL INFORMATION", questions:[
                 {qid:14, question:'Residential Address', type:'text', skip:false},
-                {qid:15, question:'Contact Address', type:'text', skip:false}
+                {qid:21, question:'City or Village of Residence', type:'text', skip:false},
+                {qid:22, question:'Ward of Residence', type:'text', skip:false},
+                {qid:23, question:'LGA of Residence', type:'text', skip:false}
+            ]},
+            {label:"CONTACT INFORMATION", questions:[
+                {qid:14, question:'Contact Address', type:'text', skip:false},
+                {qid:24, question:'City or Village of Contact', type:'text', skip:false},
+                {qid:25, question:'Ward of Contact', type:'text', skip:false},
+                {qid:26, question:'LGA of Contact', type:'text', skip:false}
             ]},
             {label:"EDUCATION AND PROFESSION", questions:[
                 {qid:16, question:'Education Level',type:'radio', options:[{key:0,label:"Nursery"},{key:1,label:"Primary"},{key:2,label:"JSS1"},{key:3,label:"SS3"}]},
                 {qid:17, question:'Profession',type:'radio', skip:false, options:[{key:0,label:"Teacher"},{key:1,label:"Mechanic"}]}
+            ]},
+            {label:"ORIGIN", questions:[
+                {qid:27, question:'Main native language-spoken', type:'text', skip:false},
+                {qid:28, question:'Other Language spoken', type:'text', skip:false},
+                {qid:29, question:'Ward of origin', type:'text', skip:false},
+                {qid:30, question:'LGA of origin', type:'text', skip:false}
+            ]},
+            {label:"FOR NON-INDIGENES ONLY", questions:[
+                {qid:31, question:'Date of arrival in State', type:'date', skip:false},
+                {qid:32, question:'State of origin', type:'text', skip:false},
+                {qid:33, question:'Country of origin (if not Nigeria)', type:'text', skip:false}
             ]},
             {label:"NEXT OF KIN", questions:[
                 {question:'Names',type:'form', skip:false,
@@ -183,7 +214,95 @@ myModule.controller('MainController', function ($scope, $location, $cookieStore,
                 {qid:18, question:'Contact Address', type:'text', skip:false},
                 {qid:19, question:'Relationship', type:'text', skip:false},
                 {qid:20, question:'Telephone number', type:'tel', skip:false}
-            ]}]
+            ]},
+            {label:"HOUSEHOLD", questions:[
+                {qid:34, question:'Household Structure', type:'text', skip:false},
+                {qid:35, question:'Clothing', type:'text', skip:false},
+                {qid:36, question:'Nutritional status', type:'text', skip:false},
+                {qid:36, question:'Housing Accommodation', type:'text', skip:false},
+                {qid:36, question:'Surrounding Environment', type:'text', skip:false}
+            ]},
+            {label:"ACADEMIC INFORMATION", questions:[
+                {question:'Academic Year',type:'form', skip:false,
+                    options:[{type:'text',key:'pre_academic_yr',label:'Year'},
+                        {type:'text',key:'pos_academic_yr',label:'/Year'}
+                    ]},
+                {qid:37, question:'Level', type:'text', skip:false},
+                {qid:38, question:'Class', type:'text', skip:false},
+                {qid:39, question:'School City', type:'text', skip:false},
+                {qid:40, question:'School LGA', type:'text', skip:false},
+                {qid:41, question:'School', type:'text', skip:false}
+            ]},
+            {label:"EMPLOYMENT INFORMATION", questions:[
+                {qid:42, question:'Role', type:'text', skip:false},
+                {qid:43, question:'Income Type', type:'text', skip:false},
+                {qid:44, question:'Amount Per Day', type:'text', skip:false},
+                {qid:45, question:'Trainable', type:'checkbox', skip:false}
+            ]},
+            {label:"HOUSEHOLD ASSET", questions:[
+                {question:'bed & Mattress',type:'form', skip:false,
+                    options:[{type:'checkbox',key:'bm_check',label:'Check'},
+                        {type:'number',key:'bm_quantity',label:'Quanity'},
+                        {type:'text',key:'bm_um',label:'Unit of Measure'},
+                        {type:'number',key:'bm_uv',label:'Unit Value'}
+                    ]},
+                {question:'Bicycle',type:'form', skip:false,
+                    options:[{type:'checkbox',key:'byc_check',label:'Check'},
+                        {type:'number',key:'byc_quantity',label:'Quanity'},
+                        {type:'text',key:'byc_um',label:'Unit of Measure'},
+                        {type:'number',key:'byc_uv',label:'Unit Value'}
+                    ]},
+                {question:'Cattle',type:'form', skip:false,
+                    options:[{type:'checkbox',key:'ca_check',label:'Check'},
+                        {type:'number',key:'ca_quantity',label:'Quanity'},
+                        {type:'text',key:'ca_um',label:'Unit of Measure'},
+                        {type:'number',key:'ca_uv',label:'Unit Value'}
+                    ]},
+                {question:'Chicken',type:'form', skip:false,
+                    options:[{type:'checkbox',key:'c_check',label:'Check'},
+                        {type:'number',key:'c_quantity',label:'Quanity'},
+                        {type:'text',key:'c_um',label:'Unit of Measure'},
+                        {type:'number',key:'c_uv',label:'Unit Value'}
+                    ]},
+                {question:'Goat',type:'form', skip:false,
+                    options:[{type:'checkbox',key:'g_check',label:'Check'},
+                        {type:'number',key:'g_quantity',label:'Quanity'},
+                        {type:'text',key:'g_um',label:'Unit of Measure'},
+                        {type:'number',key:'g_uv',label:'Unit Value'}
+                    ]},
+                {question:'Land',type:'form', skip:false,
+                    options:[{type:'checkbox',key:'l_check',label:'Check'},
+                        {type:'number',key:'l_quantity',label:'Quanity'},
+                        {type:'text',key:'l_um',label:'Unit of Measure'},
+                        {type:'number',key:'l_uv',label:'Unit Value'}
+                    ]},
+                {question:'Pig',type:'form', skip:false,
+                    options:[{type:'checkbox',key:'p_check',label:'Check'},
+                        {type:'number',key:'p_quantity',label:'Quanity'},
+                        {type:'text',key:'p_um',label:'Unit of Measure'},
+                        {type:'number',key:'p_uv',label:'Unit Value'}
+                    ]},
+                {question:'Radio',type:'form', skip:false,
+                    options:[{type:'checkbox',key:'r_check',label:'Check'},
+                        {type:'number',key:'r_quantity',label:'Quanity'},
+                        {type:'text',key:'r_um',label:'Unit of Measure'},
+                        {type:'number',key:'r_uv',label:'Unit Value'}
+                    ]},
+                {question:'Sewing Machine',type:'form', skip:false,
+                    options:[{type:'checkbox',key:'sm_check',label:'Check'},
+                        {type:'number',key:'sm_quantity',label:'Quanity'},
+                        {type:'text',key:'sm_um',label:'Unit of Measure'},
+                        {type:'number',key:'sm_uv',label:'Unit Value'}
+                    ]},
+                {question:'Television',type:'form', skip:false,
+                    options:[{type:'checkbox',key:'tv_check',label:'Check'},
+                        {type:'number',key:'tv_quantity',label:'Quanity'},
+                        {type:'text',key:'tv_um',label:'Unit of Measure'},
+                        {type:'number',key:'tv_uv',label:'Unit Value'}
+                    ]}
+
+            ]}
+        ]
     };
 
     angular.extend($scope,data);
@@ -261,7 +380,7 @@ myModule.controller('MainController', function ($scope, $location, $cookieStore,
     $scope.returnBack = function(){
         this.householdInfo.counter=0;
         this.householdInfo.index =0;
-        $location.path("/member");
+        $location.path("/house");
     }
     //login side
     $scope.tron = {
@@ -280,6 +399,11 @@ myModule.controller('MainController', function ($scope, $location, $cookieStore,
     ];
 
     $scope.selectedItem = $scope.regions[0];
+
+    $scope.addMemberEnrolment = function(){
+
+
+    }
 
     $scope.totalEnrolment = function(){
          var db = app.database()

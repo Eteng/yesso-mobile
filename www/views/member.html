@@ -1,31 +1,43 @@
 
-    <my-head-mat
+<my-head-mat
         showBack=true
-        title="HouseHold Enrolment"
+        title="Member Enrolment"
         newHousehold="newHouseholdEnrolment()"
         onBack="returnBack()">
-    </my-head-mat>
+</my-head-mat>
 
-    <div class="yesso alert"  >
-        <h1>Household Registration</h1>
-    </div>
+<div class="yesso alert"  >
+    <h1>Member Registration</h1>
+</div>
 
-    <div class="container">
+<div class="container">
 
-            <div>
+    <div>
 
-                <ul class="list-group">
-                    <li class="list-group-item" data-ng-repeat="s in household">
-                        <span class="badge">{{s.questions.length}}</span>
-                        <a ng-tap="householdInfo.index=$index; $navigate.go('/two/{{$index}}/{{householdInfo.counter}}','slide')" >{{s.label}}</a>
-                    </li>
-                </ul>
-
-            </div>
-
-        <div class="well">
-                <button ng-click="saveEnrolment()" type="button" class="btn btn-success">Save changes</button>
-        </div>
-
+        <ul class="list-group">
+            <li class="list-group-item" data-ng-repeat="s in memberhold">
+                <span class="badge">{{s.questions.length}}</span>
+                <a ng-tap="householdInfo.index=$index; $navigate.go('/two/{{$index}}/{{householdInfo.counter}}','slide')" >{{s.label}}</a>
+            </li>
+        </ul>
 
     </div>
+
+    <div class="well">
+        <button ng-click="saveMemberEnrolment()" type="button" class="btn btn-default">
+            <span class="glyphicon glyphicon-ok"></span>
+            Save changes</button>
+        <button ng-click="addMemberEnrolment()" type="button" class="btn btn-default">
+            <span class="glyphicon glyphicon-user"></span>
+            Add Another Member
+        </button>
+
+        <button ng-click="saveEnrolment()" type="button" class="btn btn-default">
+            <span class="glyphicon glyphicon-trash"></span>
+            Cancel
+        </button>
+
+    </div>
+
+
+</div>
