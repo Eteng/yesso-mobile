@@ -15,7 +15,7 @@
     <div>
 
         <ul class="list-group">
-            <li class="list-group-item" data-ng-repeat="s in memberhold">
+            <li class="list-group-item" data-ng-repeat="s in house_members">
                 <span class="badge">{{s.questions.length}}</span>
                 <a ng-tap="householdInfo.index=$index; $navigate.go('/two/{{$index}}/{{householdInfo.counter}}','slide')" >{{s.label}}</a>
             </li>

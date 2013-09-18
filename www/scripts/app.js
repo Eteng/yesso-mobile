@@ -156,8 +156,95 @@ myModule.controller('MainController', function ($scope, $location, $cookieStore,
     $scope.$navigate = $navigate;
 
     var data ={
-        memberhold:["SECTION 1: HOUSEHOLD SCHEDULE"],
+        house_members:[
+            {label:"REGISTRATION DETAILS", questions:[
+                {qid:46, question:'LGA of Registration', type:'text', skip:false},
+                {qid:47, question:'Ward of Registration', type:'text', skip:false},
+                {qid:48, question:'Venue of Registration', type:'text', skip:false},
+                {qid:49, question:'Date of Registration', type:'date', skip:false}
+            ]},
+            {label:'PERSONAL INFORMATION',questions:[
+                {qid:1, question:'Title',type:'radio', skip:false, options:[{key:0,label:"Mr"},{key:1,label:"Miss"},{key:2,label:"Mrs"}]},
+                {question:'Names',type:'form', skip:false,
+                    options:[{qid:2,type:'text',key:'surname',label:'Surname'}, {qid:3,type:'text',key:'firstname',label:'First Name'},
+                        {qid:4,type:'text',key:'middlename',label:'Middle Name'}
+                    ]},
+                {qid:5, question:'Sex',type:'radio', skip:false, options:[{key:1,label:"Male"},{key:0,label:"Female"}]},
+                {qid:6, question:'Height(cm)', type:'number', skip:false},
+                {qid:7, question:'Date of Birth', type:'date', skip:false},
+                {qid:8, question:'Does he/she have a birth registration certificate?', type:'radio', skip:false,
+                    options:[{key:1,label:"Yes"},{key:0,label:"No"}]},
+                {qid:9, question:'National ID Card Number', type:'text', skip:false},
+                {qid:10, question:'Marital Status',type:'radio',
+                    options:[{key:0,label:"Single"},{key:1,label:"Married"},{key:2,label:"Divorced"},
+                        {key:3,label:"Widowed"},{key:4,label:"separated"}]},
+                {qid:11, question:'Religion',type:'radio', options:[{key:0,label:"Christian"},{key:1,label:"Islam"},{key:2,label:"Other"}]}
+            ]},
+            {label:"BIO DATA", questions:[
+                {qid:12, question:'Blood Group',type:'radio', options:[{key:0,label:"A"},{key:1,label:"B"},{key:2,label:"AB"},{key:3,label:"O"}]},
+                {qid:13, question:'Rhesus',type:'radio', skip:false, options:[{key:0,label:"Plus"},{key:1,label:"Minus"}]}
+            ]},
+            {label:"RESIDENTIAL INFORMATION", questions:[
+                {qid:14, question:'Residential Address', type:'text', skip:false},
+                {qid:21, question:'City or Village of Residence', type:'text', skip:false},
+                {qid:22, question:'Ward of Residence', type:'text', skip:false},
+                {qid:23, question:'LGA of Residence', type:'text', skip:false}
+            ]},
+            {label:"CONTACT INFORMATION", questions:[
+                {qid:14, question:'Contact Address', type:'text', skip:false},
+                {qid:24, question:'City or Village of Contact', type:'text', skip:false},
+                {qid:25, question:'Ward of Contact', type:'text', skip:false},
+                {qid:26, question:'LGA of Contact', type:'text', skip:false}
+            ]},
+            {label:"EDUCATION AND PROFESSION", questions:[
+                {qid:16, question:'Education Level',type:'radio', options:[{key:0,label:"Nursery"},{key:1,label:"Primary"},{key:2,label:"JSS1"},{key:3,label:"SS3"}]},
+                {qid:17, question:'Profession',type:'radio', skip:false, options:[{key:0,label:"Teacher"},{key:1,label:"Mechanic"}]}
+            ]},
+            {label:"ORIGIN", questions:[
+                {qid:27, question:'Main native language-spoken', type:'text', skip:false},
+                {qid:28, question:'Other Language spoken', type:'text', skip:false},
+                {qid:29, question:'Ward of origin', type:'text', skip:false},
+                {qid:30, question:'LGA of origin', type:'text', skip:false}
+            ]},
+            {label:"FOR NON-INDIGENES ONLY", questions:[
+                {qid:31, question:'Date of arrival in State', type:'date', skip:false},
+                {qid:32, question:'State of origin', type:'text', skip:false},
+                {qid:33, question:'Country of origin (if not Nigeria)', type:'text', skip:false}
+            ]},
+            {label:"NEXT OF KIN", questions:[
+                {question:'Names',type:'form', skip:false,
+                    options:[{type:'text',key:'k_surname',label:'Surname'}, {type:'text',key:'k_firstname',label:'First Name'},
+                        {type:'text',key:'k_middlename',label:'Middle Name'}
+                    ]},
+                {qid:18, question:'Contact Address', type:'text', skip:false},
+                {qid:19, question:'Relationship', type:'text', skip:false},
+                {qid:20, question:'Telephone number', type:'tel', skip:false}
+            ]},
+            {label:"ACADEMIC INFORMATION", questions:[
+                {question:'Academic Year',type:'form', skip:false,
+                    options:[{type:'text',key:'pre_academic_yr',label:'Year'},
+                        {type:'text',key:'pos_academic_yr',label:'/Year'}
+                    ]},
+                {qid:37, question:'Level', type:'text', skip:false},
+                {qid:38, question:'Class', type:'text', skip:false},
+                {qid:39, question:'School City', type:'text', skip:false},
+                {qid:40, question:'School LGA', type:'text', skip:false},
+                {qid:41, question:'School', type:'text', skip:false}
+            ]},
+            {label:"EMPLOYMENT INFORMATION", questions:[
+                {qid:42, question:'Role', type:'text', skip:false},
+                {qid:43, question:'Income Type', type:'text', skip:false},
+                {qid:44, question:'Amount Per Day', type:'text', skip:false},
+                {qid:45, question:'Trainable', type:'checkbox', skip:false}
+            ]}
+        ],
         household:[
+            {label:"REGISTRATION DETAILS", questions:[
+                {qid:46, question:'LGA of Registration', type:'text', skip:false},
+                {qid:47, question:'Ward of Registration', type:'text', skip:false},
+                {qid:48, question:'Venue of Registration', type:'text', skip:false},
+                {qid:49, question:'Date of Registration', type:'date', skip:false}
+            ]},
             {label:'PERSONAL INFORMATION',questions:[
                 {qid:1, question:'Title',type:'radio', skip:false, options:[{key:0,label:"Mr"},{key:1,label:"Miss"},{key:2,label:"Mrs"}]},
                 {question:'Names',type:'form', skip:false,
@@ -330,6 +417,8 @@ myModule.controller('MainController', function ($scope, $location, $cookieStore,
     }
     $scope.scopeExistingEnrolment();
 
+
+
     $scope.prevPage = function () {
         if ($scope.householdInfo.counter > 0) {
             $scope.householdInfo.counter--;
@@ -401,8 +490,10 @@ myModule.controller('MainController', function ($scope, $location, $cookieStore,
     $scope.selectedItem = $scope.regions[0];
 
     $scope.addMemberEnrolment = function(){
-
-
+         //check if household enrolment has been loaded
+        if(!angular.isUndefined(this.currentHouse)){
+            $location.path("/member/"+this.currentHouse.id);
+        }
     }
 
     $scope.totalEnrolment = function(){
@@ -422,17 +513,21 @@ myModule.controller('MainController', function ($scope, $location, $cookieStore,
             }
          );
     }
+
     $scope.totalEnrolment();
 
     $scope.saveEnrolment = function(){
         var db = app.database()
+        var current;
         db.transaction(
             function(transaction){
                 //@todo: start time and finish time
-                transaction.executeSql("INSERT INTO Enrolment(Household_id,Head) VALUES(?,?) ;",[new Date().getTime(),true],
+                var gen_household_id = new Date().getTime();
+                transaction.executeSql("INSERT INTO Enrolment(Household_id,Head) VALUES(?,?) ;",[gen_household_id,true],
                     function(trnsaction, results){
                         var x_enrolment = $cookieStore.get('newhouse');
                         //insert answers for enrolment
+                        current= {'id':results.insertId,household_id:gen_household_id};
                         angular.forEach(x_enrolment, function(v,k){
                             this.executeSql("INSERT INTO Enrolled(Enrolment_id,Question,Answer) VALUES (?,?,?);",[results.insertId,k,v]);
                         },transaction);
@@ -444,6 +539,7 @@ myModule.controller('MainController', function ($scope, $location, $cookieStore,
                 alert("Error processing SQL for save enrolment: "+err.message);
             },function(){
                 $scope.totalEnrolment();
+                $scope.currentHouse = current;
                 console.log("Saving Enrollment data success");
                 alert("Saved Enrollment data success")
             }
