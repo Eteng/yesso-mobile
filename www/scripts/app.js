@@ -429,12 +429,13 @@ myModule.controller('MainController', function ($scope, $location, $cookieStore,
     }
 
     $scope.needLogin = function(){
-
+        alert($cookieStore.get('user'));
+        return
         if(angular.isUndefined($cookieStore.get('user'))){
             $window.location.href ="index.html"
         }
     }
-    //$scope.needLogin();
+    $scope.needLogin();
 
     $scope.scopeExistingEnrolment= function(){
          var x_enrolment = $cookieStore.get('newhouse');
