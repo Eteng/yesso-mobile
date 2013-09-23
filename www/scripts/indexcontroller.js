@@ -20,6 +20,11 @@ myModule.directive('ngTap', function() {
 });
 
 myModule.controller('MainCtr', function ($scope, $location, $rootScope, $routeParams, $cookieStore, $window) {
+    $cookieStore.put('user',{
+        displayName:"Eteng",
+        url:"wikid.jpg"
+    })
+    $location.href ="dashboard.html"
     $scope.tron = {
         "username":"",
         "password":""
