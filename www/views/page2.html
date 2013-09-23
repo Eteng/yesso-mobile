@@ -1,30 +1,26 @@
 <my-head-mat
         showBack="true"
-        title="New HouseHold Enrolment"
-        onBack="$navigate.back()"
+        title="HouseHold Enrolment"
         >
 </my-head-mat>
 
 
 <div class="container">
 
-        <ul class="pager">
-            <li class="previous"><a ng-tap="returnBack()" ><span class="glyphicon glyphicon-chevron-left"></span> Back</a></li>
-        </ul>
+    <ul class="pager">
+        <li class="previous"><a ng-tap="returnBack2();"><span class="glyphicon glyphicon-chevron-left"></span> Back</a></li>
+    </ul>
 
-        <h2>{{selectedQuestion.question</h2>
-        <!--options-->
-
-        <div class="container" scrollable>
-            <p>Option one</p>
-            <p>Option one</p>
-            <p>Option one</p>
-
-        </div>
-
+    <render-question
+            question="household[householdInfo.index].questions[householdInfo.counter]">
+    </render-question>
 </div>
-<ul class="pager">
-    <li><a href="#">Previous</a></li>
-    <li><a href="#">Skip</a></li>
-    <li><a href="#">Next</a></li>
-</ul>
+
+<div class="well well-sm">
+    <ul class="pager">
+        <li><a ng-show="canBack()" ng-tap="setPage(householdInfo.counter-1);$navigate.go('/f/{{householdInfo.index}}/{{householdInfo.counter-1}}','slide')">Previous</a></li>
+        <li><a ng-show="canNext()" ng-tap="setPage(householdInfo.counter+1);$navigate.go('/f/{{householdInfo.index}}/{{householdInfo.counter+1}}','slide')">Skip</a></li>
+        <li><a ng-show="canNext()" ng-tap="submit(householdInfo.counter+1);return;$navigate.go('/f/{{householdInfo.index}}/{{householdInfo.counter+1}}','slide')">Next</a></li>
+        <li ng-show="isLastInSection()"><a  ng-click="saveSection()">Save Section</a></li>
+    </ul>
+</div>

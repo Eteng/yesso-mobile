@@ -3,7 +3,7 @@
         showBack=true
         title="Member Enrolment"
         newHousehold="newHouseholdEnrolment()"
-        onBack="returnBack()">
+        onBack="returnBack2()">
 </my-head-mat>
 
 <div class="yesso alert"  >
@@ -17,22 +17,22 @@
         <ul class="list-group">
             <li class="list-group-item" data-ng-repeat="s in house_members">
                 <span class="badge">{{s.questions.length}}</span>
-                <a ng-tap="householdInfo.index=$index; $navigate.go('/two/{{$index}}/{{householdInfo.counter}}','slide')" >{{s.label}}</a>
+                <a ng-tap="householdInfo.index=$index; $navigate.go('/f/{{$index}}/{{householdInfo.counter}}','slide')" >{{s.label}}</a>
             </li>
         </ul>
 
     </div>
 
     <div class="well">
-        <button ng-click="saveMemberEnrolment()" type="button" class="btn btn-default">
+        <button ng-click="saveMemberEnrolment()" type="button" class="btn btn-primary">
             <span class="glyphicon glyphicon-ok"></span>
             Save changes</button>
-        <button ng-click="addMemberEnrolment()" type="button" class="btn btn-default">
+        <button ng-click="addMemberEnrolment()" type="button" class="btn btn-primary">
             <span class="glyphicon glyphicon-user"></span>
             Add Another Member
         </button>
 
-        <button ng-click="saveEnrolment()" type="button" class="btn btn-default">
+        <button ng-click="saveEnrolment()" type="button" class="btn btn-danger">
             <span class="glyphicon glyphicon-trash"></span>
             Cancel
         </button>

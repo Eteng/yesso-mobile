@@ -34,9 +34,10 @@ myModule.directive('myHeadMat',function($cookieStore, $window){
                     $cookieStore.put('newhouse',{});
                     return true;
                 }else{
-                    navigator.notification.confirm('There is an ongoing enrolment do you want to continue',function(result){
-                        if(!result){
+                    navigator.notification.confirm('There is an ongoing enrolment do you want to continue',function(button){
+                        if(button == 2){
                             $cookieStore.put('newhouse',{});
+                            //trash scope
                         }
                     },"New Enrolment",["continue","discard"])
                 }
@@ -58,18 +59,23 @@ myModule.directive('renderQuestion',function($compile,$rootScope){
         },
         replace:true,
         link:function(scope, elem, attrs){
-            var bool_checkbox = function(type,place,id){
-               return '<div class="btn-group" data-toggle="buttons">'+
-                      '<label class="btn btn-default">'+
-                       '<input type="checkbox" ' +
-                   'ng-model="model_'+
+
+            var bool_check = function(type,place,id){
+                return '<div class="list-group" >'+
+                    '<label class="list-group-item">'+
+                    '<input name="model_' +
+                    id+'"' +
+                    'type="checkbox" ' +
+                    'ng-model="model_'+
                     id+
-                      '">'+place+
-                       '</label></div>'
+                    '">  '+
+                    place+
+                        '</label>' +
+                    '</div>'
             }
             var boot_input = function(type,place,id){
                 if(type=="checkbox"){
-                    return bool_checkbox(type,place,id);
+                    return bool_check(type,place,id);
                 }else
                 return '<input type="' +
                     type +
@@ -147,6 +153,7 @@ myModule.config(function($routeProvider) {
         .when('/member/:house', {templateUrl:'views/member.html',transition: "modal"})
         .when('/house', { templateUrl:'views/house.html',transition: "modal"})
         .when('/two/:page/:quest', { templateUrl:'views/page1.html',transition: "modal"})
+        .when('/f/:page/:quest', { templateUrl:'views/page2.html',transition: "modal"})
         .when('/search', {templateUrl:'views/search.html'})
         .otherwise({redirectTo:'/home'});
 });
@@ -394,12 +401,33 @@ myModule.controller('MainController', function ($scope, $location, $cookieStore,
 
     angular.extend($scope,data);
 
+    function updateSessionRecord() {
+        var question = this.household[this.householdInfo.index].questions[this.householdInfo.counter]
+        var ans;
+        var enrolment = $cookieStore.get('newhouse');
+        if (question.type == "form") {
+            angular.forEach(question.options, function (v, k) {
+                ans = $scope['model_' + v.key];
+                enrolment[v.key] = ans;
+            })
+        } else {
+            ans = $scope['model_' + question.qid];
+            enrolment[question.qid] = ans;
+        }
+        $cookieStore.put('newhouse', enrolment);
+    }
+
     $scope.counter = 0;
 
     $scope.householdInfo = {
          counter:0,
          index:0
     }
+    $scope.memberInfo = {
+        counter:0,
+        index:0
+    }
+
     $scope.needLogin = function(){
         if(angular.isUndefined($cookieStore.get('user'))){
             $window.location.href ="index.html"
@@ -417,7 +445,13 @@ myModule.controller('MainController', function ($scope, $location, $cookieStore,
     }
     $scope.scopeExistingEnrolment();
 
-
+    $scope.isLastInSection = function () {
+        if ($scope.householdInfo.counter == this.section().questions.length -1) {
+            return true
+        }else{
+            return false;
+        }
+    };
 
     $scope.prevPage = function () {
         if ($scope.householdInfo.counter > 0) {
@@ -448,21 +482,13 @@ myModule.controller('MainController', function ($scope, $location, $cookieStore,
     };
     $scope.submit = function (n) {
         //process question..
-        var question = this.household[this.householdInfo.index].questions[this.householdInfo.counter]
-        var ans;
-        var enrolment = $cookieStore.get('newhouse');
-        if(question.type=="form"){
-            angular.forEach(question.options,function(v,k){
-                ans = $scope['model_'+v.key];
-                enrolment[v.key] = ans;
-            })
-        }else{
-            ans  = $scope['model_'+question.qid];
-            enrolment[question.qid] = ans;
-        }
-        $cookieStore.put('newhouse',enrolment);
+        updateSessionRecord.call(this);
         $scope.householdInfo.counter = n;
     };
+    $scope.saveSection = function() {
+        updateSessionRecord.call(this);
+        alert("Save Successful!")
+    }
     $scope.section = function(){
         return this.household[this.householdInfo.index]
     }
@@ -471,6 +497,12 @@ myModule.controller('MainController', function ($scope, $location, $cookieStore,
         this.householdInfo.index =0;
         $location.path("/house");
     }
+    $scope.returnBack2 = function(){
+        this.householdInfo.counter=0;
+        this.householdInfo.index =0;
+        $location.path("/member/0");
+    }
+
     //login side
     $scope.tron = {
         "username":"",
@@ -544,5 +576,35 @@ myModule.controller('MainController', function ($scope, $location, $cookieStore,
                 alert("Saved Enrollment data success")
             }
         );
+    }
+    $scope.trashScope = function(index){
+        var quest = this.household;
+        angular.forEach(quest,function(newvalue,k){
+            if(newvalue.type == "radio"){
+                delete this['model_'+newvalue.qid];
+            }else if(newvalue.type == "form"){
+                angular.forEach(newvalue.options, function(value,key){
+                    delete this['model_'+value.key];
+                },this)
+            }else if(newvalue.type=="date"){
+                delete this['model_'+newvalue.qid];
+            }else{
+                delete this['model_'+newvalue.qid];
+            }
+        },$rootScope)
+    }
+    $scope.trashEnrollment = function(){
+        //check for member enrolment
+        if(!angular.isUndefined($cookieStore.get("newmenber"))){
+            $cookieStore.remove("newmember");
+            $location.path("/viewhouse/"+this.currentHouse.id)
+            return;
+        }
+
+        if(!angular.isUndefined($cookieStore.get("newhouse"))){
+            $cookieStore.remove("newhouse");
+            $location.path("/home/");
+            return;
+        }
     }
 });
