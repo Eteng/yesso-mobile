@@ -28,10 +28,11 @@
 
 
 
-    <feature name="debug-server" required="true">
+   <!-- <feature name="debug-server" required="true">
         <param name="domain" value="http://phonegap.com"/>
         <param name="key" value="yesso_app_ng_123"/>
     </feature>
+    -->
     <!--
         If you do not want any permissions to be added to your app, add the
         following tag to your config.xml; you will still have the INTERNET
