@@ -42,10 +42,9 @@ myModule.controller('MainCtr', function ($scope, $location, $rootScope, $routePa
                     displayName:"Eteng",
                     url:"wikid.jpg"
             })
-            alert($cookieStore.get("user"));
+
             $window.location.href ="dashboard.html"
-            $location.href ="dashboard.html"
-            return;
+            //$location.href ="dashboard.html"
         }else{
             this.error_message = "Username / password is incorrect, please try again!"
             alert(this.error_message);

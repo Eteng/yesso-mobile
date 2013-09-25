@@ -1,0 +1,43 @@
+
+    <my-head-mat
+            >
+    </my-head-mat>
+
+    <div class="yesso alert"  ng-init="allEnrolments()">
+        <input type="search" class="form-control" placeholder="Search Enrollment">
+    </div>
+    <div class="container">
+
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                   <tr>
+                      <!-- <th>#</th>-->
+                       <th>Household ID</th>
+                       <!--<th>Head</th>-->
+                       <th>Sur Name</th>
+                       <th>first Name</th>
+                       <th>Middle Name</th>
+                   </tr>
+
+                </thead>
+                <tbody>
+                    <tr ng-repeat="row in allE">
+                       <!-- <td>{{$index}}</td>-->
+                        <td><a href="/viewhouse/{{row.Enrolment_id}}"> {{row.Household_id}}</a></td>
+                        <!--<td>{{row.Head}}</td>-->
+                        <td>{{row.surname}}</td>
+                        <td>{{row.firstname}} </td>
+                        <td>{{row.middlename}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="well">
+            <button type="button" class="btn btn-default btn-lg">
+                <span class="glyphicon glyphicon-transfer"></span> Sync
+            </button>
+        </div>
+
+    </div>

@@ -66,7 +66,7 @@ myModule.directive('renderQuestion',function($compile,$rootScope){
                     '<input name="model_' +
                     id+'"' +
                     'type="checkbox" ' +
-                    'ng-model="model_'+
+                    'ng-model="enrollment.model_'+
                     id+
                     '">  '+
                     place+
@@ -81,13 +81,13 @@ myModule.directive('renderQuestion',function($compile,$rootScope){
                     type +
                     '" class="form-control" placeholder="' +
                     place +
-                    '" ng-model="model_'+
+                    '" ng-model="enrollment.model_'+
                     id+
                     '">'
             };
             var boot_radio = function(key,value,id){
                 return '<div class="radio">' +
-                    '<label><input type="radio" ng-model="model_' +
+                    '<label><input type="radio" ng-model="enrollment.model_' +
                     id+
                     '" name="optionsRadios" value="' +
                     key +
@@ -154,12 +154,15 @@ myModule.config(function($routeProvider) {
         .when('/house', { templateUrl:'views/house.html',transition: "modal"})
         .when('/two/:page/:quest', { templateUrl:'views/page1.html',transition: "modal"})
         .when('/f/:page/:quest', { templateUrl:'views/page2.html',transition: "modal"})
-        .when('/search', {templateUrl:'views/search.html'})
+        .when('/search', {templateUrl:'views/search.html',transition: "modal"})
+        .when('/viewhouse/:view_id', {templateUrl:'views/view.html',transition: "modal"})
         .otherwise({redirectTo:'/home'});
 });
 
 myModule.controller('MainController', function ($scope, $location, $cookieStore, $navigate, $rootScope, $routeParams, $window) {
+
     $scope.$location = $location;
+
     $scope.$navigate = $navigate;
 
     var data ={
@@ -407,11 +410,11 @@ myModule.controller('MainController', function ($scope, $location, $cookieStore,
         var enrolment = $cookieStore.get('newhouse');
         if (question.type == "form") {
             angular.forEach(question.options, function (v, k) {
-                ans = $scope['model_' + v.key];
+                ans = this['model_' + v.key];
                 enrolment[v.key] = ans;
-            })
+            },$rootScope.enrollment)
         } else {
-            ans = $scope['model_' + question.qid];
+            ans = $rootScope.enrollment['model_' + question.qid];
             enrolment[question.qid] = ans;
         }
         $cookieStore.put('newhouse', enrolment);
@@ -429,8 +432,6 @@ myModule.controller('MainController', function ($scope, $location, $cookieStore,
     }
 
     $scope.needLogin = function(){
-        alert($cookieStore.get('user'));
-        return
         if(angular.isUndefined($cookieStore.get('user'))){
             $window.location.href ="index.html"
         }
@@ -442,7 +443,7 @@ myModule.controller('MainController', function ($scope, $location, $cookieStore,
          if(!angular.isUndefined(x_enrolment)){
                 angular.forEach(x_enrolment, function(v,k){
                     this['model_'+k]=v;
-                },$rootScope)
+                },$rootScope.enrollment)
          }
     }
     $scope.scopeExistingEnrolment();
@@ -548,6 +549,74 @@ myModule.controller('MainController', function ($scope, $location, $cookieStore,
          );
     }
 
+    $scope.allEnrolments = function(){
+        var db = app.database()
+        db.transaction(
+            function(transaction){
+                transaction.executeSql('SELECT * FROM Enrolment left join Enrolled on Enrolled.Enrolment_id = Enrolment.id WHERE Enrolled.Question in ("firstname","middlename","surname") ;',[],
+                    function(trnsaction, results){
+                        var prop ={}
+                        var listing = []
+
+                        for (var i=0; i<results.rows.length; i++) {
+                            var row = results.rows.item(i);
+                            if(prop == {}){
+                                prop["Household_id"] = row.Household_id;
+                                prop["Head"] = row.Head;
+                                prop["Enrolment_id"] = row.Enrolment_id;
+                            }else{
+                                if(prop.Household_id == row.Household_id){
+                                    prop[row.Question]= row.Answer;
+                                }else{
+                                    listing.push(prop);
+                                    //new step
+                                    prop ={}
+                                    prop["Household_id"] = row.Household_id;
+                                    prop["Head"] = row.Head;
+                                    prop["Enrolment_id"] = row.Enrolment_id;
+                                    prop[row.Question]= row.Answer;
+                                }
+                            }
+                            if(i== results.rows.length - 1){
+                                listing.push(prop);
+                            }
+
+                        }
+                        $scope.allE = listing;
+                        $scope.$safeApply();
+                    },function(err){
+                        alert("Error processing SQL: "+err.code);
+                    })
+            }
+        );
+    }
+
+    $scope.viewEnrolment = function(){
+        var db = app.database()
+        db.transaction(
+            function(transaction){
+                transaction.executeSql('SELECT * FROM Enrolment left join Enrolled on Enrolled.Enrolment_id = Enrolment.id WHERE Enrolled.Enrolment_id = ? ;',[$routeParams.view_id],
+                    function(trnsaction, results){
+                        var prop ={}
+                        for (var i=0; i<results.rows.length; i++) {
+                            var row = results.rows.item(i);
+                            if(prop == {}){
+                                prop["Household_id"] = row.Household_id;
+                                prop["Head"] = row.Head;
+                                prop["Enrolment_id"] = row.Enrolment_id;
+                            }else{
+                                prop[row.Question]= row.Answer;
+                            }
+                        }
+                        $scope.viewEnt = prop;
+                        $scope.$safeApply();
+                    },function(err){
+                        alert("Error processing SQL: "+err.code);
+                    })
+            }
+        );
+    }
+
     $scope.totalEnrolment();
 
     $scope.saveEnrolment = function(){
@@ -579,21 +648,8 @@ myModule.controller('MainController', function ($scope, $location, $cookieStore,
             }
         );
     }
-    $scope.trashScope = function(index){
-        var quest = this.household;
-        angular.forEach(quest,function(newvalue,k){
-            if(newvalue.type == "radio"){
-                delete this['model_'+newvalue.qid];
-            }else if(newvalue.type == "form"){
-                angular.forEach(newvalue.options, function(value,key){
-                    delete this['model_'+value.key];
-                },this)
-            }else if(newvalue.type=="date"){
-                delete this['model_'+newvalue.qid];
-            }else{
-                delete this['model_'+newvalue.qid];
-            }
-        },$rootScope)
+    $scope.trashScope = function(){
+        $rootScope.enrollment = {};
     }
     $scope.trashEnrollment = function(){
         //check for member enrolment
@@ -605,7 +661,9 @@ myModule.controller('MainController', function ($scope, $location, $cookieStore,
 
         if(!angular.isUndefined($cookieStore.get("newhouse"))){
             $cookieStore.remove("newhouse");
-            $location.path("/home/");
+            this.trashScope();
+            $rootScope.$safeApply();
+            $location.path("/home");
             return;
         }
     }
