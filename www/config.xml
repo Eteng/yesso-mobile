@@ -27,7 +27,8 @@
     <feature name="http://api.phonegap.com/1.0/media"/>
 
 
-
+    <gap:platform name="android" />
+    <preference name="fullscreen" value="true" />
    <!-- <feature name="debug-server" required="true">
         <param name="domain" value="http://phonegap.com"/>
         <param name="key" value="yesso_app_ng_123"/>
