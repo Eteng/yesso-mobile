@@ -1,0 +1,41 @@
+
+    <my-head-mat
+        showBack=true
+        title="HouseHold Enrolment"
+        newHousehold="newHouseholdEnrolment()"
+        onBack="returnBack()">
+    </my-head-mat>
+
+    <div class="yesso alert"  ng-init="viewEnrolment()" >
+        <h1>View Enrolloment</h1>
+    </div>
+
+    <div class="container">
+
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <tr ng-repeat="(key_e,val_e) in viewEnt">
+                <td>{{key_e}}</td>
+                <td>{{val_e}}</td>
+            </tr>
+        </table>
+    </div>
+
+        <div class="well">
+                <button ng-click="editEnrolment()" type="button" class="btn btn-primary">
+                    <span class="glyphicon glyphicon-ok"></span>
+                    Edit Enrolment</button>
+                <button ng-click="addMemberEnrolment()" type="button" class="btn btn-primary">
+                    <span class="glyphicon glyphicon-user"></span>
+                    Add Member
+                </button>
+
+                <button ng-click="trashEnrollment()" type="button" class="btn btn-danger">
+                    <span class="glyphicon glyphicon-trash"></span>
+                    Cancel
+                </button>
+
+        </div>
+
+
+    </div>

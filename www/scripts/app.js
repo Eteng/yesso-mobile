@@ -406,6 +406,32 @@ myModule.controller('MainController', function ($scope, $location,$navigate, $ro
 
     angular.extend($scope,data);
 
+    function getHeadQuestion(qid){
+        for(var nv=0; nv < $scope.household.length; nv++){
+            for(var zv=0; zv < $scope.household[nv].questions.length; zv++){
+                if($scope.household[nv].questions[zv].type =="form"){
+                    for(var inx=0; inx < $scope.household[nv].questions[zv].options.length; inx++){
+                        if($scope.household[nv].questions[zv].options[inx].key==qid){
+                            return $scope.household[nv].questions[zv].options[inx];
+                        }
+                    }
+                }else{
+                    if($scope.household[nv].questions[zv].qid == qid){
+                        return $scope.household[nv].questions[zv];
+                    }
+                }
+            }
+        }
+    }
+
+    function getOptionByKey(options, key){
+        for(var nv=0; nv < options.length; nv++){
+            if(options[nv].key==key){
+                return options[nv]
+            }
+        }
+    }
+
     function updateSessionRecord() {
         var question = this.household[this.householdInfo.index].questions[this.householdInfo.counter]
         var ans;
@@ -531,7 +557,7 @@ myModule.controller('MainController', function ($scope, $location,$navigate, $ro
     $scope.addMemberEnrolment = function(){
          //check if household enrolment has been loaded
         if(!angular.isUndefined(this.currentHouse)){
-            $location.path("/member/"+this.currentHouse.id);
+            $location.path("/member/"+this.currentHouse.Enrolment_id);
         }
     }
 
@@ -604,15 +630,33 @@ myModule.controller('MainController', function ($scope, $location,$navigate, $ro
                         var prop ={}
                         for (var i=0; i<results.rows.length; i++) {
                             var row = results.rows.item(i);
-                            if(prop == {}){
-                                prop["Household_id"] = row.Household_id;
-                                prop["Head"] = row.Head;
-                                prop["Enrolment_id"] = row.Enrolment_id;
-                            }else{
-                                prop[row.Question]= row.Answer;
+
+                            prop["Household ID"] = row.Household_id;
+                            prop["Head"] = row.Head;
+                            prop["Enrolment ID"] = row.Enrolment_id;
+                            //prop[row.Question]= row.Answer;
+                            if(row.Head=="true"){
+                                var quest = getHeadQuestion(row.Question);
+                                //console.log(quest);
+                                if(quest.type=="radio"){
+                                    if(angular.isUndefined(quest.label)){
+                                        prop[quest.question]= getOptionByKey(quest.options, row.Answer).label;
+                                    }else{
+                                        prop[quest.label]= getOptionByKey(quest.options, row.Answer).label;
+                                    }
+                                }else{
+                                    if(angular.isUndefined(quest.label)){
+                                        prop[quest.question]= row.Answer;
+                                    }else{
+                                        prop[quest.label]= row.Answer;
+                                    }
+                                }
+
                             }
+
                         }
                         $scope.viewEnt = prop;
+                        $scope.currentHouse = prop;
                         $scope.$safeApply();
                     },function(err){
                         alert("Error processing SQL: "+err.code);
@@ -634,7 +678,7 @@ myModule.controller('MainController', function ($scope, $location,$navigate, $ro
                     function(trnsaction, results){
                         var x_enrolment = angular.fromJson(localStorage.newhouse);
                         //insert answers for enrolment
-                        current= {'id':results.insertId,household_id:gen_household_id};
+                        current= {Enrolment_id:results.insertId,household_id:gen_household_id};
                         angular.forEach(x_enrolment, function(v,k){
                             this.executeSql("INSERT INTO Enrolled(Enrolment_id,Question,Answer) VALUES (?,?,?);",[results.insertId,k,v]);
                         },transaction);
@@ -659,7 +703,7 @@ myModule.controller('MainController', function ($scope, $location,$navigate, $ro
         //check for member enrolment
         if(!angular.isUndefined(localStorage.newhouse)){
             localStorage.removeItem("newmember");
-            $location.path("/viewhouse/"+this.currentHouse.id)
+            $location.path("/viewhouse/"+this.currentHouse.Enrolment_id)
             return;
         }
 
