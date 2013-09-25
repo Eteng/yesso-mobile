@@ -22,8 +22,10 @@ myModule.directive('myHeadMat',function($cookieStore, $window){
         transclude: false,
         replace:true,
         link:function(scope, elem, attrs){
-            scope.user = $cookieStore.get('user');
+           // scope.user = $cookieStore.get('user');
+            scope.user = localStorage.user;
             scope.logout = function(e){
+
                 e.preventDefault();
                 $cookieStore.remove('user');
                 $cookieStore.remove('newhouse');

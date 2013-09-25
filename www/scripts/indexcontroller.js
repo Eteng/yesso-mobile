@@ -21,6 +21,11 @@ myModule.directive('ngTap', function() {
 
 myModule.controller('MainCtr', function ($scope, $location, $rootScope, $routeParams, $cookieStore, $window) {
 
+    $scope.loadAgentInfo = function(){
+
+    };
+    $scope.loadAgentInfo();
+
     $scope.tron = {
         "username":"",
         "password":""
@@ -31,17 +36,25 @@ myModule.controller('MainCtr', function ($scope, $location, $rootScope, $routePa
         this.login();
     }
     $scope.needLogin = function(){
-        if(!angular.isUndefined($cookieStore.get('user'))){
+        /*if(!angular.isUndefined($cookieStore.get('user'))){
+            $window.location.href ="dashboard.html"
+        }*/
+        if(!angular.isUndefined(localStorage.user)){
             $window.location.href ="dashboard.html"
         }
     }
     $scope.needLogin();
+
     $scope.login = function() {
         if(this.tron.username = "a" && this.tron.password == "a"){
-            $cookieStore.put('user',{
-                    displayName:"Eteng",
-                    url:"wikid.jpg"
-            })
+            /*$cookieStore.put('user',{
+                displayName:"Eteng",
+                url:"wikid.jpg"
+            })*/
+            localStorage.user ={
+                displayName:"Eteng",
+                url:"wikid.jpg"
+            };
 
             $window.location.href ="dashboard.html"
             //$location.href ="dashboard.html"
