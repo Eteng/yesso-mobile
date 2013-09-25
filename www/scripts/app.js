@@ -419,7 +419,7 @@ myModule.controller('MainController', function ($scope, $location,$navigate, $ro
             ans = $rootScope.enrollment['model_' + question.qid];
             enrolment[question.qid] = ans;
         }
-        localStorage.newhous = angular.toJson(enrolment);
+        localStorage.newhouse = angular.toJson(enrolment);
 
     }
 
