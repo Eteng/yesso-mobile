@@ -8,7 +8,7 @@ myModule.filter('startFrom', function() {
     }
 });
 
-myModule.directive('myHeadMat',function($cookieStore, $window){
+myModule.directive('myHeadMat',function($window, $rootScope){
     return {
         restrict: 'E',
         scope:{
@@ -22,24 +22,24 @@ myModule.directive('myHeadMat',function($cookieStore, $window){
         transclude: false,
         replace:true,
         link:function(scope, elem, attrs){
-           // scope.user = $cookieStore.get('user');
+
             scope.user = angular.fromJson(localStorage.user);
             scope.logout = function(e){
 
                 e.preventDefault();
-                $cookieStore.remove('user');
-                $cookieStore.remove('newhouse');
+                localStorage.removeItem("user");
+                localStorage.removeItem('newhouse');
                 $window.location.href = "index.html";
             }
             scope.newHouseHold = function(e){
-                if(angular.isUndefined($cookieStore.get('newhouse'))){
-                    $cookieStore.put('newhouse',{});
+                if(angular.isUndefined(localStorage.newhouse)){
+                    localStorage.newhouse = "{}";
                     return true;
                 }else{
                     navigator.notification.confirm('There is an ongoing enrolment do you want to continue',function(button){
                         if(button == 2){
-                            $cookieStore.put('newhouse',{});
-                            //trash scope
+                            localStorage.newhouse = "{}";
+                            $rootScope.enrollment = {};
                         }
                     },"New Enrolment",["continue","discard"])
                 }
@@ -161,7 +161,7 @@ myModule.config(function($routeProvider) {
         .otherwise({redirectTo:'/home'});
 });
 
-myModule.controller('MainController', function ($scope, $location, $cookieStore, $navigate, $rootScope, $routeParams, $window) {
+myModule.controller('MainController', function ($scope, $location,$navigate, $rootScope, $routeParams, $window) {
 
     $scope.$location = $location;
 
@@ -409,7 +409,7 @@ myModule.controller('MainController', function ($scope, $location, $cookieStore,
     function updateSessionRecord() {
         var question = this.household[this.householdInfo.index].questions[this.householdInfo.counter]
         var ans;
-        var enrolment = $cookieStore.get('newhouse');
+        var enrolment = angular.fromJson(localStorage.newhouse);
         if (question.type == "form") {
             angular.forEach(question.options, function (v, k) {
                 ans = this['model_' + v.key];
@@ -419,7 +419,8 @@ myModule.controller('MainController', function ($scope, $location, $cookieStore,
             ans = $rootScope.enrollment['model_' + question.qid];
             enrolment[question.qid] = ans;
         }
-        $cookieStore.put('newhouse', enrolment);
+        localStorage.newhous = angular.toJson(enrolment);
+
     }
 
     $scope.counter = 0;
@@ -441,7 +442,8 @@ myModule.controller('MainController', function ($scope, $location, $cookieStore,
     $scope.needLogin();
 
     $scope.scopeExistingEnrolment= function(){
-         var x_enrolment = $cookieStore.get('newhouse');
+
+         var x_enrolment = angular.fromJson(localStorage.newhouse);
          if(!angular.isUndefined(x_enrolment)){
                 angular.forEach(x_enrolment, function(v,k){
                     this['model_'+k]=v;
@@ -630,7 +632,7 @@ myModule.controller('MainController', function ($scope, $location, $cookieStore,
                 var gen_household_id = new Date().getTime();
                 transaction.executeSql("INSERT INTO Enrolment(Household_id,Head) VALUES(?,?) ;",[gen_household_id,true],
                     function(trnsaction, results){
-                        var x_enrolment = $cookieStore.get('newhouse');
+                        var x_enrolment = angular.fromJson(localStorage.newhouse);
                         //insert answers for enrolment
                         current= {'id':results.insertId,household_id:gen_household_id};
                         angular.forEach(x_enrolment, function(v,k){
@@ -655,14 +657,14 @@ myModule.controller('MainController', function ($scope, $location, $cookieStore,
     }
     $scope.trashEnrollment = function(){
         //check for member enrolment
-        if(!angular.isUndefined($cookieStore.get("newmenber"))){
-            $cookieStore.remove("newmember");
+        if(!angular.isUndefined(localStorage.newhouse)){
+            localStorage.removeItem("newmember");
             $location.path("/viewhouse/"+this.currentHouse.id)
             return;
         }
 
-        if(!angular.isUndefined($cookieStore.get("newhouse"))){
-            $cookieStore.remove("newhouse");
+        if(!angular.isUndefined(localStorage.newhouse)){
+            localStorage.removeItem("newhouse");
             this.trashScope();
             $rootScope.$safeApply();
             $location.path("/home");

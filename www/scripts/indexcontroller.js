@@ -36,9 +36,6 @@ myModule.controller('MainCtr', function ($scope, $location, $rootScope, $routePa
         this.login();
     }
     $scope.needLogin = function(){
-        /*if(!angular.isUndefined($cookieStore.get('user'))){
-            $window.location.href ="dashboard.html"
-        }*/
         if(!angular.isUndefined(localStorage.user)){
             $window.location.href ="dashboard.html"
         }
@@ -47,17 +44,12 @@ myModule.controller('MainCtr', function ($scope, $location, $rootScope, $routePa
 
     $scope.login = function() {
         if(this.tron.username = "a" && this.tron.password == "a"){
-            /*$cookieStore.put('user',{
-                displayName:"Eteng",
-                url:"wikid.jpg"
-            })*/
             localStorage.user = angular.toJson({
                 displayName:"Eteng",
                 url:"wikid.jpg"
             });
 
             $window.location.href ="dashboard.html"
-            //$location.href ="dashboard.html"
         }else{
             this.error_message = "Username / password is incorrect, please try again!"
             alert(this.error_message);
