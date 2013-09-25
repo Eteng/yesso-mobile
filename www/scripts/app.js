@@ -436,7 +436,7 @@ myModule.controller('MainController', function ($scope, $location, $cookieStore,
             $window.location.href ="index.html"
         }
     }
-    $scope.needLogin();
+    //$scope.needLogin();
 
     $scope.scopeExistingEnrolment= function(){
          var x_enrolment = $cookieStore.get('newhouse');
