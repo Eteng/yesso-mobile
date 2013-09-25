@@ -51,10 +51,10 @@ myModule.controller('MainCtr', function ($scope, $location, $rootScope, $routePa
                 displayName:"Eteng",
                 url:"wikid.jpg"
             })*/
-            localStorage.user ={
+            localStorage.user = angular.toJson({
                 displayName:"Eteng",
                 url:"wikid.jpg"
-            };
+            });
 
             $window.location.href ="dashboard.html"
             //$location.href ="dashboard.html"

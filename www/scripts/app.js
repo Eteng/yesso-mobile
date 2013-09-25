@@ -23,7 +23,7 @@ myModule.directive('myHeadMat',function($cookieStore, $window){
         replace:true,
         link:function(scope, elem, attrs){
            // scope.user = $cookieStore.get('user');
-            scope.user = localStorage.user;
+            scope.user = angular.fromJson(localStorage.user);
             scope.logout = function(e){
 
                 e.preventDefault();
@@ -434,11 +434,11 @@ myModule.controller('MainController', function ($scope, $location, $cookieStore,
     }
 
     $scope.needLogin = function(){
-        if(angular.isUndefined($cookieStore.get('user'))){
+        if(angular.isUndefined(localStorage.user)){
             $window.location.href ="index.html"
         }
     }
-    //$scope.needLogin();
+    $scope.needLogin();
 
     $scope.scopeExistingEnrolment= function(){
          var x_enrolment = $cookieStore.get('newhouse');
