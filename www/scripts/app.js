@@ -9,7 +9,7 @@ myModule.filter('startFrom', function() {
 });
 
 myModule.factory("Enrollment",function($resource){
-    return $resource("http://yesso.smartappng.com/console/api/v1/enrollment/:enrollment_id",{},{
+    return $resource("http://yesso.smartappng.com/console/public/api/v1/enrollment/:enrollment_id",{},{
         store:{method:'PUT', isArray:false}
     })
     /*return $resource("http://localhost/apps/yesso-unified/public/api/v1/enrollment/:enrollment_id",{},{

@@ -9,7 +9,7 @@ myModule.config(function($routeProvider) {
 });
 //services...
 myModule.factory("Agent",function($resource){
-    return $resource("http://yesso.smartappng.com/console/api/v1/agent/:agentid",{},{
+    return $resource("http://yesso.smartappng.com/console/public/api/v1/agent/:agentid",{},{
         query:{method:'GET', isArray:false},
         auth:{method:'POST', isArray:false}
     })
