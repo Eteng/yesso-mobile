@@ -73,6 +73,8 @@ myModule.controller('MainCtr', function ($scope, $location, $rootScope, $routePa
                 $location.path("/login");
             }
 
+        },function(err){
+            alert(err.data.error.message);
         })
     }
     $scope.login = function() {
