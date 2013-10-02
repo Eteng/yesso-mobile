@@ -1,5 +1,5 @@
 //ngResource
-var myModule = angular.module('assetsApp',['Scope.safeApply','ajoslin.mobile-navigate','ngCookies']);
+var myModule = angular.module('assetsApp',['Scope.safeApply','ajoslin.mobile-navigate','ngResource']);
 
 myModule.filter('startFrom', function() {
     return function(input, start) {
@@ -7,6 +7,16 @@ myModule.filter('startFrom', function() {
         return input.slice(start);
     }
 });
+
+myModule.factory("Enrollment",function($resource){
+    return $resource("http://yesso.smartappng.com/api/v1/enrollment/:enrollment_id",{},{
+        store:{method:'PUT', isArray:false}
+    })
+    /*return $resource("http://localhost/apps/yesso-unified/public/api/v1/enrollment/:enrollment_id",{},{
+        store:{method:'PUT', isArray:false}
+    })*/
+});
+
 
 myModule.directive('myHeadMat',function($window, $rootScope){
     return {
@@ -26,7 +36,6 @@ myModule.directive('myHeadMat',function($window, $rootScope){
             scope.user = angular.fromJson(localStorage.user);
             scope.logout = function(e){
                 e.preventDefault();
-                localStorage.removeItem("user");
                 localStorage.removeItem('newhouse');
                 $window.location.href = "index.html";
             }
@@ -158,7 +167,7 @@ myModule.config(function($routeProvider) {
         .otherwise({redirectTo:'/home'});
 });
 
-myModule.controller('MainController', function ($scope, $location,$navigate, $rootScope, $routeParams, $window) {
+myModule.controller('MainController', function ($scope, $location,$navigate, $rootScope, $routeParams, $window, Enrollment) {
 
     $scope.$location = $location;
 
@@ -167,236 +176,241 @@ myModule.controller('MainController', function ($scope, $location,$navigate, $ro
     var data ={
         house_members:[
             {label:"REGISTRATION DETAILS", questions:[
-                {qid:46, question:'LGA of Registration', type:'text', skip:false},
-                {qid:47, question:'Ward of Registration', type:'text', skip:false},
-                {qid:48, question:'Venue of Registration', type:'text', skip:false},
-                {qid:49, question:'Date of Registration', type:'date', skip:false}
+                {qid:"lga_registration", question:'LGA of Registration', type:'text', skip:false},
+                {qid:"ward_registration", question:'Ward of Registration', type:'text', skip:false},
+                {qid:46, question:'Venue of Registration', type:'text', skip:false},
+                {qid:"date_registration", question:'Date of Registration', type:'date', skip:false}
             ]},
             {label:'PERSONAL INFORMATION',questions:[
-                {qid:1, question:'Title',type:'radio', skip:false, options:[{key:0,label:"Mr"},{key:1,label:"Miss"},{key:2,label:"Mrs"}]},
+                {qid:"title", question:'Title',type:'radio', skip:false, options:[{key:0,label:"Mr"},{key:1,label:"Miss"},{key:2,label:"Mrs"}]},
                 {question:'Names',type:'form', skip:false,
-                    options:[{qid:2,type:'text',key:'surname',label:'Surname'}, {qid:3,type:'text',key:'firstname',label:'First Name'},
-                        {qid:4,type:'text',key:'middlename',label:'Middle Name'}
+                    options:[{qid:2,type:'text',key:'surname',label:'Surname'}, {qid:3,type:'text',key:'first_name',label:'First Name'},
+                        {qid:4,type:'text',key:'middle_name',label:'Middle Name'}
                     ]},
-                {qid:5, question:'Sex',type:'radio', skip:false, options:[{key:1,label:"Male"},{key:0,label:"Female"}]},
-                {qid:6, question:'Height(cm)', type:'number', skip:false},
-                {qid:7, question:'Date of Birth', type:'date', skip:false},
+                {qid:"gender", question:'Sex',type:'radio', skip:false, options:[{key:1,label:"Male"},{key:0,label:"Female"}]},
+                {qid:"height", question:'Height(cm)', type:'number', skip:false},
+                {qid:"date_of_birth", question:'Date of Birth', type:'date', skip:false},
                 {qid:8, question:'Does he/she have a birth registration certificate?', type:'radio', skip:false,
                     options:[{key:1,label:"Yes"},{key:0,label:"No"}]},
-                {qid:9, question:'National ID Card Number', type:'text', skip:false},
+                {qid:"nat_id_card_number", question:'National ID Card Number', type:'text', skip:false},
                 {qid:10, question:'Marital Status',type:'radio',
                     options:[{key:0,label:"Single"},{key:1,label:"Married"},{key:2,label:"Divorced"},
                         {key:3,label:"Widowed"},{key:4,label:"separated"}]},
-                {qid:11, question:'Religion',type:'radio', options:[{key:0,label:"Christian"},{key:1,label:"Islam"},{key:2,label:"Other"}]}
+                {qid:"religion", question:'Religion',type:'radio', options:[{key:0,label:"Christian"},{key:1,label:"Islam"},{key:2,label:"Other"}]}
             ]},
             {label:"BIO DATA", questions:[
-                {qid:12, question:'Blood Group',type:'radio', options:[{key:0,label:"A"},{key:1,label:"B"},{key:2,label:"AB"},{key:3,label:"O"}]},
-                {qid:13, question:'Rhesus',type:'radio', skip:false, options:[{key:0,label:"Plus"},{key:1,label:"Minus"}]}
+                {qid:"blood_group", question:'Blood Group',type:'radio', options:[{key:0,label:"A"},{key:1,label:"B"},{key:2,label:"AB"},{key:3,label:"O"}]},
+                {qid:"rhesus", question:'Rhesus',type:'radio', skip:false, options:[{key:0,label:"Plus"},{key:1,label:"Minus"}]}
             ]},
             {label:"RESIDENTIAL INFORMATION", questions:[
-                {qid:14, question:'Residential Address', type:'text', skip:false},
-                {qid:21, question:'City or Village of Residence', type:'text', skip:false},
-                {qid:22, question:'Ward of Residence', type:'text', skip:false},
+                {qid:"residential_add", question:'Residential Address', type:'text', skip:false},
+                {qid:"residential_city", question:'City or Village of Residence', type:'text', skip:false},
+                {qid:"residential_ward", question:'Ward of Residence', type:'text', skip:false},
                 {qid:23, question:'LGA of Residence', type:'text', skip:false}
             ]},
             {label:"CONTACT INFORMATION", questions:[
-                {qid:14, question:'Contact Address', type:'text', skip:false},
-                {qid:24, question:'City or Village of Contact', type:'text', skip:false},
-                {qid:25, question:'Ward of Contact', type:'text', skip:false},
-                {qid:26, question:'LGA of Contact', type:'text', skip:false}
+                {qid:"contact_add", question:'Contact Address', type:'text', skip:false},
+                {qid:"contact_city", question:'City or Village of Contact', type:'text', skip:false},
+                {qid:"contact_ward", question:'Ward of Contact', type:'text', skip:false},
+                {qid:"contact_lga", question:'LGA of Contact', type:'text', skip:false}
             ]},
             {label:"EDUCATION AND PROFESSION", questions:[
-                {qid:16, question:'Education Level',type:'radio', options:[{key:0,label:"Nursery"},{key:1,label:"Primary"},{key:2,label:"JSS1"},{key:3,label:"SS3"}]},
-                {qid:17, question:'Profession',type:'radio', skip:false, options:[{key:0,label:"Teacher"},{key:1,label:"Mechanic"}]}
+                {qid:"education_level", question:'Education Level',type:'radio', options:[{key:0,label:"Nursery"},{key:1,label:"Primary"},{key:2,label:"JSS1"},{key:3,label:"SS3"}]},
+                {qid:"profession", question:'Profession',type:'radio', skip:false, options:[{key:0,label:"Teacher"},{key:1,label:"Mechanic"}]}
             ]},
             {label:"ORIGIN", questions:[
-                {qid:27, question:'Main native language-spoken', type:'text', skip:false},
-                {qid:28, question:'Other Language spoken', type:'text', skip:false},
-                {qid:29, question:'Ward of origin', type:'text', skip:false},
-                {qid:30, question:'LGA of origin', type:'text', skip:false}
+                {qid:"native_language", question:'Main native language-spoken', type:'text', skip:false},
+                {qid:"other_language", question:'Other Language spoken', type:'text', skip:false},
+                {qid:"origin_ward", question:'Ward of origin', type:'text', skip:false},
+                {qid:"origin_lga", question:'LGA of origin', type:'text', skip:false}
             ]},
             {label:"FOR NON-INDIGENES ONLY", questions:[
-                {qid:31, question:'Date of arrival in State', type:'date', skip:false},
-                {qid:32, question:'State of origin', type:'text', skip:false},
-                {qid:33, question:'Country of origin (if not Nigeria)', type:'text', skip:false}
+                {qid:"date_of_arrival", question:'Date of arrival in State', type:'date', skip:false},
+                {qid:"origin_state", question:'State of origin', type:'text', skip:false},
+                {qid:"origin_country", question:'Country of origin (if not Nigeria)', type:'text', skip:false}
             ]},
             {label:"NEXT OF KIN", questions:[
                 {question:'Names',type:'form', skip:false,
-                    options:[{type:'text',key:'k_surname',label:'Surname'}, {type:'text',key:'k_firstname',label:'First Name'},
-                        {type:'text',key:'k_middlename',label:'Middle Name'}
+                    options:[{type:'text',key:'next_of_kin_surname',label:'Surname'},
+                        {type:'text',key:'next_of_kin_other_names',label:'Other Names'}
                     ]},
-                {qid:18, question:'Contact Address', type:'text', skip:false},
-                {qid:19, question:'Relationship', type:'text', skip:false},
-                {qid:20, question:'Telephone number', type:'tel', skip:false}
+                {qid:'next_of_kin_contact_add', question:'Contact Address', type:'text', skip:false},
+                {qid:'next_of_kin_relationship', question:'Relationship', type:'text', skip:false},
+                {qid:'next_of_kin_phone', question:'Telephone number', type:'tel', skip:false}
             ]},
             {label:"ACADEMIC INFORMATION", questions:[
-                {question:'Academic Year',type:'form', skip:false,
-                    options:[{type:'text',key:'pre_academic_yr',label:'Year'},
-                        {type:'text',key:'pos_academic_yr',label:'/Year'}
-                    ]},
-                {qid:37, question:'Level', type:'text', skip:false},
-                {qid:38, question:'Class', type:'text', skip:false},
-                {qid:39, question:'School City', type:'text', skip:false},
-                {qid:40, question:'School LGA', type:'text', skip:false},
-                {qid:41, question:'School', type:'text', skip:false}
+                {
+                    /**question:'Academic Year',type:'form', skip:false,
+                     options:[{type:'text',key:'pre_academic_yr',label:'Year'},
+                     {type:'text',key:'pos_academic_yr',label:'/Year'}
+                     ]},*/
+                    qid:'acad_yr',   question:'Academic Year',type:'text', skip:false
+                },
+                {qid:'acad_level', question:'Level', type:'text', skip:false},
+                {qid:'acad_class', question:'Class', type:'text', skip:false},
+                {qid:'school_city', question:'School City', type:'text', skip:false},
+                {qid:'school_lga', question:'School LGA', type:'text', skip:false},
+                {qid:'school', question:'School', type:'text', skip:false}
             ]},
             {label:"EMPLOYMENT INFORMATION", questions:[
-                {qid:42, question:'Role', type:'text', skip:false},
-                {qid:43, question:'Income Type', type:'text', skip:false},
-                {qid:44, question:'Amount Per Day', type:'text', skip:false},
-                {qid:45, question:'Trainable', type:'checkbox', skip:false}
+                {qid:'role', question:'Role', type:'text', skip:false},
+                {qid:'income_type', question:'Income Type', type:'text', skip:false},
+                {qid:'amount_per_day', question:'Amount Per Day', type:'text', skip:false},
+                {qid:'trainable', question:'Trainable', type:'checkbox', skip:false}
             ]}
         ],
         household:[
             {label:"REGISTRATION DETAILS", questions:[
-                {qid:46, question:'LGA of Registration', type:'text', skip:false},
-                {qid:47, question:'Ward of Registration', type:'text', skip:false},
-                {qid:48, question:'Venue of Registration', type:'text', skip:false},
-                {qid:49, question:'Date of Registration', type:'date', skip:false}
+                {qid:"lga_registration", question:'LGA of Registration', type:'text', skip:false},
+                {qid:"ward_registration", question:'Ward of Registration', type:'text', skip:false},
+                {qid:46, question:'Venue of Registration', type:'text', skip:false},
+                {qid:"date_registration", question:'Date of Registration', type:'date', skip:false}
             ]},
             {label:'PERSONAL INFORMATION',questions:[
-                {qid:1, question:'Title',type:'radio', skip:false, options:[{key:0,label:"Mr"},{key:1,label:"Miss"},{key:2,label:"Mrs"}]},
+                {qid:"title", question:'Title',type:'radio', skip:false, options:[{key:0,label:"Mr"},{key:1,label:"Miss"},{key:2,label:"Mrs"}]},
                 {question:'Names',type:'form', skip:false,
-                    options:[{qid:2,type:'text',key:'surname',label:'Surname'}, {qid:3,type:'text',key:'firstname',label:'First Name'},
-                         {qid:4,type:'text',key:'middlename',label:'Middle Name'}
+                    options:[{qid:2,type:'text',key:'surname',label:'Surname'}, {qid:3,type:'text',key:'first_name',label:'First Name'},
+                         {qid:4,type:'text',key:'middle_name',label:'Middle Name'}
                     ]},
-                {qid:5, question:'Sex',type:'radio', skip:false, options:[{key:1,label:"Male"},{key:0,label:"Female"}]},
-                {qid:6, question:'Height(cm)', type:'number', skip:false},
-                {qid:7, question:'Date of Birth', type:'date', skip:false},
+                {qid:"gender", question:'Sex',type:'radio', skip:false, options:[{key:1,label:"Male"},{key:0,label:"Female"}]},
+                {qid:"height", question:'Height(cm)', type:'number', skip:false},
+                {qid:"date_of_birth", question:'Date of Birth', type:'date', skip:false},
                 {qid:8, question:'Does he/she have a birth registration certificate?', type:'radio', skip:false,
                     options:[{key:1,label:"Yes"},{key:0,label:"No"}]},
-                {qid:9, question:'National ID Card Number', type:'text', skip:false},
+                {qid:"nat_id_card_number", question:'National ID Card Number', type:'text', skip:false},
                 {qid:10, question:'Marital Status',type:'radio',
                     options:[{key:0,label:"Single"},{key:1,label:"Married"},{key:2,label:"Divorced"},
                              {key:3,label:"Widowed"},{key:4,label:"separated"}]},
-                {qid:11, question:'Religion',type:'radio', options:[{key:0,label:"Christian"},{key:1,label:"Islam"},{key:2,label:"Other"}]}
+                {qid:"religion", question:'Religion',type:'radio', options:[{key:0,label:"Christian"},{key:1,label:"Islam"},{key:2,label:"Other"}]}
             ]},
             {label:"BIO DATA", questions:[
-                {qid:12, question:'Blood Group',type:'radio', options:[{key:0,label:"A"},{key:1,label:"B"},{key:2,label:"AB"},{key:3,label:"O"}]},
-                {qid:13, question:'Rhesus',type:'radio', skip:false, options:[{key:0,label:"Plus"},{key:1,label:"Minus"}]}
+                {qid:"blood_group", question:'Blood Group',type:'radio', options:[{key:0,label:"A"},{key:1,label:"B"},{key:2,label:"AB"},{key:3,label:"O"}]},
+                {qid:"rhesus", question:'Rhesus',type:'radio', skip:false, options:[{key:0,label:"Plus"},{key:1,label:"Minus"}]}
             ]},
             {label:"RESIDENTIAL INFORMATION", questions:[
-                {qid:14, question:'Residential Address', type:'text', skip:false},
-                {qid:21, question:'City or Village of Residence', type:'text', skip:false},
-                {qid:22, question:'Ward of Residence', type:'text', skip:false},
+                {qid:"residential_add", question:'Residential Address', type:'text', skip:false},
+                {qid:"residential_city", question:'City or Village of Residence', type:'text', skip:false},
+                {qid:"residential_ward", question:'Ward of Residence', type:'text', skip:false},
                 {qid:23, question:'LGA of Residence', type:'text', skip:false}
             ]},
             {label:"CONTACT INFORMATION", questions:[
-                {qid:14, question:'Contact Address', type:'text', skip:false},
-                {qid:24, question:'City or Village of Contact', type:'text', skip:false},
-                {qid:25, question:'Ward of Contact', type:'text', skip:false},
-                {qid:26, question:'LGA of Contact', type:'text', skip:false}
+                {qid:"contact_add", question:'Contact Address', type:'text', skip:false},
+                {qid:"contact_city", question:'City or Village of Contact', type:'text', skip:false},
+                {qid:"contact_ward", question:'Ward of Contact', type:'text', skip:false},
+                {qid:"contact_lga", question:'LGA of Contact', type:'text', skip:false}
             ]},
             {label:"EDUCATION AND PROFESSION", questions:[
-                {qid:16, question:'Education Level',type:'radio', options:[{key:0,label:"Nursery"},{key:1,label:"Primary"},{key:2,label:"JSS1"},{key:3,label:"SS3"}]},
-                {qid:17, question:'Profession',type:'radio', skip:false, options:[{key:0,label:"Teacher"},{key:1,label:"Mechanic"}]}
+                {qid:"education_level", question:'Education Level',type:'radio', options:[{key:0,label:"Nursery"},{key:1,label:"Primary"},{key:2,label:"JSS1"},{key:3,label:"SS3"}]},
+                {qid:"profession", question:'Profession',type:'radio', skip:false, options:[{key:0,label:"Teacher"},{key:1,label:"Mechanic"}]}
             ]},
             {label:"ORIGIN", questions:[
-                {qid:27, question:'Main native language-spoken', type:'text', skip:false},
-                {qid:28, question:'Other Language spoken', type:'text', skip:false},
-                {qid:29, question:'Ward of origin', type:'text', skip:false},
-                {qid:30, question:'LGA of origin', type:'text', skip:false}
+                {qid:"native_language", question:'Main native language-spoken', type:'text', skip:false},
+                {qid:"other_language", question:'Other Language spoken', type:'text', skip:false},
+                {qid:"origin_ward", question:'Ward of origin', type:'text', skip:false},
+                {qid:"origin_lga", question:'LGA of origin', type:'text', skip:false}
             ]},
             {label:"FOR NON-INDIGENES ONLY", questions:[
-                {qid:31, question:'Date of arrival in State', type:'date', skip:false},
-                {qid:32, question:'State of origin', type:'text', skip:false},
-                {qid:33, question:'Country of origin (if not Nigeria)', type:'text', skip:false}
+                {qid:"date_of_arrival", question:'Date of arrival in State', type:'date', skip:false},
+                {qid:"origin_state", question:'State of origin', type:'text', skip:false},
+                {qid:"origin_country", question:'Country of origin (if not Nigeria)', type:'text', skip:false}
             ]},
             {label:"NEXT OF KIN", questions:[
                 {question:'Names',type:'form', skip:false,
-                    options:[{type:'text',key:'k_surname',label:'Surname'}, {type:'text',key:'k_firstname',label:'First Name'},
-                        {type:'text',key:'k_middlename',label:'Middle Name'}
+                    options:[{type:'text',key:'next_of_kin_surname',label:'Surname'},
+                        {type:'text',key:'next_of_kin_other_names',label:'Other Names'}
                     ]},
-                {qid:18, question:'Contact Address', type:'text', skip:false},
-                {qid:19, question:'Relationship', type:'text', skip:false},
-                {qid:20, question:'Telephone number', type:'tel', skip:false}
+                {qid:'next_of_kin_contact_add', question:'Contact Address', type:'text', skip:false},
+                {qid:'next_of_kin_relationship', question:'Relationship', type:'text', skip:false},
+                {qid:'next_of_kin_phone', question:'Telephone number', type:'tel', skip:false}
             ]},
             {label:"HOUSEHOLD", questions:[
-                {qid:34, question:'Household Structure', type:'text', skip:false},
-                {qid:35, question:'Clothing', type:'text', skip:false},
-                {qid:36, question:'Nutritional status', type:'text', skip:false},
-                {qid:36, question:'Housing Accommodation', type:'text', skip:false},
-                {qid:36, question:'Surrounding Environment', type:'text', skip:false}
+                {qid:"household_structure", question:'Household Structure', type:'text', skip:false},
+                {qid:"clothing", question:'Clothing', type:'text', skip:false},
+                {qid:"nut_status", question:'Nutritional status', type:'text', skip:false},
+                {qid:"house_acc", question:'Housing Accommodation', type:'text', skip:false},
+                {qid:"surrounding_env", question:'Surrounding Environment', type:'text', skip:false}
             ]},
             {label:"ACADEMIC INFORMATION", questions:[
-                {question:'Academic Year',type:'form', skip:false,
-                    options:[{type:'text',key:'pre_academic_yr',label:'Year'},
-                        {type:'text',key:'pos_academic_yr',label:'/Year'}
-                    ]},
-                {qid:37, question:'Level', type:'text', skip:false},
-                {qid:38, question:'Class', type:'text', skip:false},
-                {qid:39, question:'School City', type:'text', skip:false},
-                {qid:40, question:'School LGA', type:'text', skip:false},
-                {qid:41, question:'School', type:'text', skip:false}
+                {
+                    /**question:'Academic Year',type:'form', skip:false,
+                     options:[{type:'text',key:'pre_academic_yr',label:'Year'},
+                     {type:'text',key:'pos_academic_yr',label:'/Year'}
+                     ]},*/
+                     qid:'acad_yr',   question:'Academic Year',type:'text', skip:false
+                },
+                {qid:'acad_level', question:'Level', type:'text', skip:false},
+                {qid:'acad_class', question:'Class', type:'text', skip:false},
+                {qid:'school_city', question:'School City', type:'text', skip:false},
+                {qid:'school_lga', question:'School LGA', type:'text', skip:false},
+                {qid:'school', question:'School', type:'text', skip:false}
             ]},
             {label:"EMPLOYMENT INFORMATION", questions:[
-                {qid:42, question:'Role', type:'text', skip:false},
-                {qid:43, question:'Income Type', type:'text', skip:false},
-                {qid:44, question:'Amount Per Day', type:'text', skip:false},
-                {qid:45, question:'Trainable', type:'checkbox', skip:false}
+                {qid:'role', question:'Role', type:'text', skip:false},
+                {qid:'income_type', question:'Income Type', type:'text', skip:false},
+                {qid:'amount_per_day', question:'Amount Per Day', type:'text', skip:false},
+                {qid:'trainable', question:'Trainable', type:'checkbox', skip:false}
             ]},
             {label:"HOUSEHOLD ASSET", questions:[
                 {question:'bed & Mattress',type:'form', skip:false,
-                    options:[{type:'checkbox',key:'bm_check',label:'Check'},
-                        {type:'number',key:'bm_quantity',label:'Quanity'},
-                        {type:'text',key:'bm_um',label:'Unit of Measure'},
-                        {type:'number',key:'bm_uv',label:'Unit Value'}
+                    options:[{type:'checkbox',key:'bed_check',label:'Check'},
+                        {type:'number',key:'bed_qty',label:'Quanity'},
+                        {type:'text',key:'bed_msr',label:'Unit of Measure'},
+                        {type:'number',key:'bed_value',label:'Unit Value'}
                     ]},
                 {question:'Bicycle',type:'form', skip:false,
-                    options:[{type:'checkbox',key:'byc_check',label:'Check'},
-                        {type:'number',key:'byc_quantity',label:'Quanity'},
-                        {type:'text',key:'byc_um',label:'Unit of Measure'},
-                        {type:'number',key:'byc_uv',label:'Unit Value'}
+                    options:[{type:'checkbox',key:'bicycle_chck',label:'Check'},
+                        {type:'number',key:'bicycle_qty',label:'Quanity'},
+                        {type:'text',key:'bicycle_msr',label:'Unit of Measure'},
+                        {type:'number',key:'bicycle_value',label:'Unit Value'}
                     ]},
                 {question:'Cattle',type:'form', skip:false,
-                    options:[{type:'checkbox',key:'ca_check',label:'Check'},
-                        {type:'number',key:'ca_quantity',label:'Quanity'},
-                        {type:'text',key:'ca_um',label:'Unit of Measure'},
-                        {type:'number',key:'ca_uv',label:'Unit Value'}
+                    options:[{type:'checkbox',key:'cattle_check',label:'Check'},
+                        {type:'number',key:'cattle_qty',label:'Quanity'},
+                        {type:'text',key:'cattle_msr',label:'Unit of Measure'},
+                        {type:'number',key:'cattle_value',label:'Unit Value'}
                     ]},
                 {question:'Chicken',type:'form', skip:false,
-                    options:[{type:'checkbox',key:'c_check',label:'Check'},
-                        {type:'number',key:'c_quantity',label:'Quanity'},
-                        {type:'text',key:'c_um',label:'Unit of Measure'},
-                        {type:'number',key:'c_uv',label:'Unit Value'}
+                    options:[{type:'checkbox',key:'chicken_check',label:'Check'},
+                        {type:'number',key:'chicken_qty',label:'Quanity'},
+                        {type:'text',key:'chicken_msr',label:'Unit of Measure'},
+                        {type:'number',key:'chicken_value',label:'Unit Value'}
                     ]},
                 {question:'Goat',type:'form', skip:false,
-                    options:[{type:'checkbox',key:'g_check',label:'Check'},
-                        {type:'number',key:'g_quantity',label:'Quanity'},
-                        {type:'text',key:'g_um',label:'Unit of Measure'},
-                        {type:'number',key:'g_uv',label:'Unit Value'}
+                    options:[{type:'checkbox',key:'goat_check',label:'Check'},
+                        {type:'number',key:'goat_qty',label:'Quanity'},
+                        {type:'text',key:'goat_msr',label:'Unit of Measure'},
+                        {type:'number',key:'goat_value',label:'Unit Value'}
                     ]},
                 {question:'Land',type:'form', skip:false,
-                    options:[{type:'checkbox',key:'l_check',label:'Check'},
-                        {type:'number',key:'l_quantity',label:'Quanity'},
-                        {type:'text',key:'l_um',label:'Unit of Measure'},
-                        {type:'number',key:'l_uv',label:'Unit Value'}
+                    options:[{type:'checkbox',key:'land_check',label:'Check'},
+                        {type:'number',key:'land_qty',label:'Quanity'},
+                        {type:'text',key:'land_msr',label:'Unit of Measure'},
+                        {type:'number',key:'land_value',label:'Unit Value'}
                     ]},
                 {question:'Pig',type:'form', skip:false,
-                    options:[{type:'checkbox',key:'p_check',label:'Check'},
-                        {type:'number',key:'p_quantity',label:'Quanity'},
-                        {type:'text',key:'p_um',label:'Unit of Measure'},
-                        {type:'number',key:'p_uv',label:'Unit Value'}
+                    options:[{type:'checkbox',key:'pig_check',label:'Check'},
+                        {type:'number',key:'pig_qty',label:'Quanity'},
+                        {type:'text',key:'pig_msr',label:'Unit of Measure'},
+                        {type:'number',key:'pig_value',label:'Unit Value'}
                     ]},
                 {question:'Radio',type:'form', skip:false,
-                    options:[{type:'checkbox',key:'r_check',label:'Check'},
-                        {type:'number',key:'r_quantity',label:'Quanity'},
-                        {type:'text',key:'r_um',label:'Unit of Measure'},
-                        {type:'number',key:'r_uv',label:'Unit Value'}
+                    options:[{type:'checkbox',key:'radio_check',label:'Check'},
+                        {type:'number',key:'radio_qty',label:'Quanity'},
+                        {type:'text',key:'radio_msr',label:'Unit of Measure'},
+                        {type:'number',key:'radio_value',label:'Unit Value'}
                     ]},
                 {question:'Sewing Machine',type:'form', skip:false,
-                    options:[{type:'checkbox',key:'sm_check',label:'Check'},
-                        {type:'number',key:'sm_quantity',label:'Quanity'},
-                        {type:'text',key:'sm_um',label:'Unit of Measure'},
-                        {type:'number',key:'sm_uv',label:'Unit Value'}
+                    options:[{type:'checkbox',key:'sewing_check',label:'Check'},
+                        {type:'number',key:'sewing_qty',label:'Quanity'},
+                        {type:'text',key:'sewing_msr',label:'Unit of Measure'},
+                        {type:'number',key:'sewing_value',label:'Unit Value'}
                     ]},
                 {question:'Television',type:'form', skip:false,
                     options:[{type:'checkbox',key:'tv_check',label:'Check'},
-                        {type:'number',key:'tv_quantity',label:'Quanity'},
-                        {type:'text',key:'tv_um',label:'Unit of Measure'},
-                        {type:'number',key:'tv_uv',label:'Unit Value'}
+                        {type:'number',key:'tv_qty',label:'Quanity'},
+                        {type:'text',key:'tv_msr',label:'Unit of Measure'},
+                        {type:'number',key:'tv_value',label:'Unit Value'}
                     ]}
-
             ]}
         ]
     };
@@ -613,24 +627,26 @@ myModule.controller('MainController', function ($scope, $location,$navigate, $ro
         var db = app.database()
         db.transaction(
             function(transaction){
-                transaction.executeSql('SELECT * FROM Enrolment left join Enrolled on Enrolled.Enrolment_id = Enrolment.id WHERE Enrolled.Question in ("firstname","middlename","surname") ;',[],
+                transaction.executeSql('SELECT * FROM Enrolment left join Enrolled on Enrolled.Enrolment_id = Enrolment.id WHERE Enrolled.Question in ("first_name","middle_name","surname") ;',[],
                     function(trnsaction, results){
                         var prop ={}
                         var listing = []
 
                         for (var i=0; i<results.rows.length; i++) {
                             var row = results.rows.item(i);
-                            if(prop == {}){
+
+                            if(i == 0){
                                 prop["Household_id"] = row.Household_id;
                                 prop["Head"] = row.Head;
                                 prop["Enrolment_id"] = row.Enrolment_id;
+                                prop[row.Question]= row.Answer;
                             }else{
                                 if(prop.Enrolment_id == row.Enrolment_id){
                                     prop[row.Question]= row.Answer;
                                 }else{
                                     listing.push(prop);
                                     //new step
-                                    prop ={}
+                                    var prop ={}
                                     prop["Household_id"] = row.Household_id;
                                     prop["Head"] = row.Head;
                                     prop["Enrolment_id"] = row.Enrolment_id;
@@ -742,6 +758,109 @@ myModule.controller('MainController', function ($scope, $location,$navigate, $ro
             }
         );
     }
+    $scope.progress = "0%"
+
+    $scope.syncEnrollment = function(){
+        var listing =  [];
+        var db = app.database();
+        this.progress_index = 0;
+        this.progress_value = 100;
+        db.transaction(
+            function(transaction){
+                transaction.executeSql('SELECT * FROM Enrolment left join Enrolled on Enrolled.Enrolment_id = Enrolment.id;',[],
+                    function(trnsaction, results){
+                        var prop ={}
+
+                        for (var i=0; i<results.rows.length; i++) {
+                            $scope.progress_msg="Processing Enrollment id ("+prop.enrollment_id+")..";
+                            $scope.$safeApply();
+                            var row = results.rows.item(i);
+                            //first item
+                            if(i==0){
+                                prop["household_id"] = row.Household_id;
+                                prop["head"] = (row.Head == 'true')?1:0 ;
+                                prop["enrollment_id"] = row.Enrolment_id;
+                                prop[row.Question]= row.Answer;
+                            }else{
+                                if(prop.enrollment_id == row.Enrolment_id){
+                                    prop[row.Question]= row.Answer;
+                                }else{
+                                    prop['agent_id'] =  angular.fromJson(localStorage.user).id;
+                                    listing.push(prop);
+                                    var prop =  {};
+                                    //newset
+                                    prop["household_id"] = row.Household_id;
+                                    prop["head"] = (row.Head == 'true')?1:0 ;
+                                    prop["enrollment_id"] = row.Enrolment_id;
+                                    prop[row.Question]= row.Answer;
+                                }
+                            }
+                            //last item
+                            if(i == results.rows.length-1){
+                                prop['agent_id'] =  angular.fromJson(localStorage.user).id;
+                                listing.push(prop);
+                            }
+                        }
+
+                        $scope.$safeApply();
+                    })
+            }
+            ,function(err){
+                alert("Error processing SQL: "+err.code);
+            },function(){
+                //no record
+                if(listing.length == 0){
+                    $scope.progress ="100%";
+                    $scope.progress_msg="nothing to synchronizations ..";
+                    $scope.$safeApply();
+                    return;
+                }
+                //$scope.progress ="50%";
+                //$scope.$safeApply();
+                $scope.progress_msg="Preparing synchronizations ..";
+                $scope.$safeApply();
+                var lengthy = listing.length;
+                var c_index = 0;
+                //one by one
+                var pre_enroll = function(popx){
+                    $scope.progress_msg="synchronising  enrollment (" +popx.enrollment_id+") ..";
+                    $scope.$safeApply();
+
+                    var ent_up = Enrollment.save(popx,function(resp){
+                            $scope.progress_msg=resp.message
+                            $scope.progress_value=(c_index / lengthy)* 100
+                            $scope.progress = $scope.progress_value + "%";
+                            $scope.$safeApply();
+                            //remove record from db..
+                            db.transaction(
+                                function(transaction){
+                                    transaction.executeSql("DELETE FROM Enrolment WHERE id = ?;",[popx.enrollment_id]);
+                                    transaction.executeSql("DELETE FROM Enrolled WHERE Enrolment_id = ?;",[popx.enrollment_id]);
+                                },function(err){
+                                    alert("Error processing SQL for DELETE enrolment: "+err.message);
+                                },function(){
+                                    $scope.totalEnrolment();
+                                }
+                            );
+                            c_index ++;
+                            if(c_index < lengthy){
+
+                                pre_enroll(listing[c_index]);
+                            }else{
+                                //close..
+                            }
+                    },function(err){
+                        alert(err.data.error.message);
+                    })
+                    $scope.$safeApply();
+                }
+                pre_enroll(listing[0])
+
+            });
+        $scope.$safeApply();
+
+    }
+
     $scope.saveMemberEnrolment = function(){
         var current ={}
         if(angular.isUndefined(this.currentHouse)){

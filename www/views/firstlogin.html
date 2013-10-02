@@ -7,10 +7,12 @@
     <div style="margin-bottom: 20px;" class="text-center">
         <img src="img/logo.png" />
     </div>
-    <div style="width: 90%; margin: 0px auto">
+    <div style="width: 90%; margin: 0px auto" >
 
         <form name="myForm" method="post" class="text-center" >
-
+            <div class="yesso alert">
+                <h1>Agent First Login</h1>
+            </div>
             <div class="form-group" ng-class="{'has-error': myForm.u_name.$invalid}">
                 <!--<label>Tron ID</label>-->
                 <input class="" type="text" name="u_name" placeholder="Enter Yesso ID"  ng-model="tron.username" required>
@@ -25,12 +27,9 @@
 
             <input type="hidden"  ng-model="tron.apiKey">
             <p class="text-center">
-
-                <button  ng-click="login()" ng-disabled="isClean() || myForm.$invalid" class="btn btn-primary">Sign In</button>
-
+                <button  ng-click="activate()" ng-disabled="isClean() || myForm.$invalid" class="btn btn-primary">Activate</button>
             </p>
         </form>
 
     </div>
-</div>
 </div>
