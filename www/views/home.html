@@ -14,23 +14,8 @@
                     </li>
                 </ul>
 
-
-
-
-
         <div class="well">
-            <div>
-                <div class="">
-                    <p>{{progress_msg}}</p>
-                    <div class="progress progress-striped active">
-                        <div class="progress-bar"  role="progressbar" aria-valuenow="{{progress_value}}" aria-valuemin="0" aria-valuemax="100"
-                             ng-style="{width:'{{progress}}'}">
-                            <!--style="width: 45%"-->
-                            <span class="sr-only">45% Complete</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <progress-info index="progress.index" msg="progress.msg"></progress-info>
             <a ng-click="syncEnrollment()" class="btn btn-success btn-lg"> <span class="glyphicon glyphicon-transfer"></span> Sync</a>
         </div>
 

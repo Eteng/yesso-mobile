@@ -55,6 +55,35 @@ myModule.directive('myHeadMat',function($window, $rootScope){
     };
 });
 
+myModule.directive("progressInfo",function($compile,$rootScope){
+    return {
+        restrict:'E',
+        template:'<div>'+
+                       '<div>'+
+                       '<p>{{msg}}</p>'+
+                       '<div class="progress progress-striped active">'+
+                       '<div id="progress1" class="progress-bar"  role="progressbar" aria-valuenow="{{index}}" aria-valuemin="0" aria-valuemax="100" '+
+                       'ng-style="{width:'+"'0%'"+'}">'+
+                            '<span class="sr-only">45% Complete</span>'+
+                       '</div>'+
+                       '</div>'+
+                   '</div>'+
+                   '</div>',
+        scope:{
+            msg:"=",
+            index:"@"
+        },
+        replace: true,
+        transclude: true,
+
+        link:function(scope, elem, attrs){
+            $rootScope.$watch(attrs.index,function(value){
+                $("#progress1").css("width",value+"%");
+            })
+        }
+    }
+});
+
 myModule.directive('renderQuestion',function($compile,$rootScope){
     return {
         restrict:'E',
@@ -167,7 +196,7 @@ myModule.config(function($routeProvider) {
         .otherwise({redirectTo:'/home'});
 });
 
-myModule.controller('MainController', function ($scope, $location,$navigate, $rootScope, $routeParams, $window, Enrollment) {
+myModule.controller('MainController', function ($scope, $location,$navigate, $rootScope, $routeParams, $window, $timeout, Enrollment) {
 
     $scope.$location = $location;
 
@@ -754,12 +783,14 @@ myModule.controller('MainController', function ($scope, $location,$navigate, $ro
             }
         );
     }
-    $scope.progress = "0%"
+    $rootScope.progress = {};
 
     $scope.syncEnrollment = function(){
+
         var listing =  [];
         var db = app.database();
-        this.progress_index = 0;
+        $rootScope.progress ={};
+        $rootScope.progress.index = 0;
         this.progress_value = 100;
         db.transaction(
             function(transaction){
@@ -768,7 +799,7 @@ myModule.controller('MainController', function ($scope, $location,$navigate, $ro
                         var prop ={}
 
                         for (var i=0; i<results.rows.length; i++) {
-                            $scope.progress_msg="Processing Enrollment id ("+prop.enrollment_id+")..";
+                            $rootScope.progress.msg="Processing Enrollment id ("+prop.enrollment_id+")..";
                             $scope.$safeApply();
                             var row = results.rows.item(i);
                             //first item
@@ -806,26 +837,25 @@ myModule.controller('MainController', function ($scope, $location,$navigate, $ro
             },function(){
                 //no record
                 if(listing.length == 0){
-                    $scope.progress ="100%";
-                    $scope.progress_msg="nothing to synchronizations ..";
+                    $rootScope.progress.index ="100";
+                    $rootScope.progress.msg="nothing to synchronizations ..";
                     $scope.$safeApply();
                     return;
                 }
-                //$scope.progress ="50%";
                 //$scope.$safeApply();
-                $scope.progress_msg="Preparing synchronizations ..";
+                $rootScope.progress.msg="Preparing synchronizations ..";
                 $scope.$safeApply();
                 var lengthy = listing.length;
                 var c_index = 0;
                 //one by one
                 var pre_enroll = function(popx){
-                    $scope.progress_msg="synchronising  enrollment (" +popx.enrollment_id+") ..";
+                    $rootScope.progress.msg="synchronising  enrollment (" +popx.enrollment_id+") ..";
                     $scope.$safeApply();
 
                     var ent_up = Enrollment.save(popx,function(resp){
-                            $scope.progress_msg=resp.message
-                            $scope.progress_value=(c_index / lengthy)* 100
-                            $scope.progress = $scope.progress_value + "%";
+                           $rootScope.progress.msg=resp.message
+                           $rootScope.progress.index=(c_index / lengthy)* 100
+
                             $scope.$safeApply();
                             //remove record from db..
                             db.transaction(
